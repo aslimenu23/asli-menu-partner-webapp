@@ -28,12 +28,21 @@ const AddRestaurant = () => {
   const [phoneNumbers, setPhoneNumbers] = useState<any[]>([""]);
   const [images, setImages] = useState([{}]);
 
+  // boolean
+  const [dineIn, setDineIn] = useState(false);
+  const [takeaway, setTakeaway] = useState(false);
+  const [delivery, setDelivery] = useState(false);
+
   // Timings
   const [restaurantTimings, setRestaurantTimings] = useState<Timing[]>([
     { from: "", to: "" },
   ]);
-  const [takeawayTimings, setTakeawayTimings] = useState<Timing[]>([{ from: "", to: ""}]);
-  const [deliveryTimings, setDeliveryTimings] = useState<Timing[]>([{ from: "", to: ""}]);
+  const [takeawayTimings, setTakeawayTimings] = useState<Timing[]>([
+    { from: "", to: "" },
+  ]);
+  const [deliveryTimings, setDeliveryTimings] = useState<Timing[]>([
+    { from: "", to: "" },
+  ]);
 
   const onSubmit = (event: any) => {
     event.preventDefault();
@@ -225,29 +234,56 @@ const AddRestaurant = () => {
         {renderPhotoUploadInputs()}
         <Checkbox label="Is managed by owner?" name="isManagedByOwner" />
 
-        <Checkbox label="Dine in" name="dineIn" />
-        {renderTimings({
-          stateKey: restaurantTimings,
-          updateStateFunction: setRestaurantTimings,
-          nameKey: "restaurantTimings",
-          title: "Restaurant Timings",
-        })}
+        <Checkbox
+          label="Dine in"
+          name="dineIn"
+          value={dineIn.toString()}
+          onChange={(value) => setDineIn(value)}
+        />
+        {dineIn ? (
+          renderTimings({
+            stateKey: restaurantTimings,
+            updateStateFunction: setRestaurantTimings,
+            nameKey: "restaurantTimings",
+            title: "Restaurant Timings",
+          })
+        ) : (
+          <></>
+        )}
 
-        <Checkbox label="Takeaway" name="takeaway" />
-        {renderTimings({
-          stateKey: takeawayTimings,
-          updateStateFunction: setTakeawayTimings,
-          nameKey: "takeawayTimings",
-          title: "Takeaway Timings",
-        })}
+        <Checkbox
+          label="Takeaway"
+          name="takeaway"
+          value={takeaway.toString()}
+          onChange={(value) => setTakeaway(value)}
+        />
+        {takeaway ? (
+          renderTimings({
+            stateKey: takeawayTimings,
+            updateStateFunction: setTakeawayTimings,
+            nameKey: "takeawayTimings",
+            title: "Takeaway Timings",
+          })
+        ) : (
+          <></>
+        )}
 
-        <Checkbox label="Delivery" name="delivery" />
-        {renderTimings({
-          stateKey: deliveryTimings,
-          updateStateFunction: setDeliveryTimings,
-          nameKey: "deliveryTimings",
-          title: "Delivery Timings",
-        })}
+        <Checkbox
+          label="Delivery"
+          name="delivery"
+          value={delivery.toString()}
+          onChange={(value) => setDelivery(value)}
+        />
+        {delivery ? (
+          renderTimings({
+            stateKey: deliveryTimings,
+            updateStateFunction: setDeliveryTimings,
+            nameKey: "deliveryTimings",
+            title: "Delivery Timings",
+          })
+        ) : (
+          <></>
+        )}
 
         <Button type="submit">Submit</Button>
       </form>

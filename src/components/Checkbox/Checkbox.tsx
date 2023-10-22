@@ -11,6 +11,7 @@ const Checkbox = ({
   name: string;
   label?: string;
   defaultValue?: string;
+  value?: string;
   onChange?: (value: boolean) => void;
   isRequired?: boolean;
 }) => {

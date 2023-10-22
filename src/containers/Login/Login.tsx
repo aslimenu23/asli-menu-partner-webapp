@@ -9,10 +9,13 @@ import firebase, {
   signInWithPhoneNumber,
   RecaptchaVerifier,
 } from "../../services/firebase";
+import { createUser, verifyUser } from "../../actions/actions";
 
 const Login = () => {
   const auth = getAuth(firebase);
   const navigate = useNavigate();
+
+  const [userAuthObject, setUserAuthObject] = useState<any>(null);
 
   const [phone, setPhone] = useState({
     value: "",
@@ -62,13 +65,19 @@ const Login = () => {
     confirmationResultRef.current
       .confirm(otp.value)
       .then((result: any) => {
-        if (result._tokenResponse.isNewUser) {
-          setNewUser(true);
-        } else {
-          navigate("/restaurants", {
-            replace: true,
-          });
-        }
+        setUserAuthObject({
+          ...result.user.reloadUserInfo,
+          uid: result.user.uid,
+        });
+        verifyUser({ uid: result.user.uid }).then((res: any) => {
+          if (res?.isNewUser) {
+            setNewUser(true);
+          } else {
+            navigate("/restaurants", {
+              replace: true,
+            });
+          }
+        });
       })
       .catch(() => {
         alert("Invalid OTP. Try again");
@@ -77,8 +86,11 @@ const Login = () => {
 
   const signUpUser = () => {
     // BE API to add user and navigate to next page
-    navigate("/restaurants", {
-      replace: true,
+    createUser({
+      name: name.value,
+      ...userAuthObject,
+    }).then((res) => {
+      console.log("12345", res);
     });
   };
 
