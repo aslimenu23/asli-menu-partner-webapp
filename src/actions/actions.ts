@@ -1,0 +1,3 @@
+const sendOTP = () => {};
+
+export { sendOTP };
