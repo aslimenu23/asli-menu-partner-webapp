@@ -1,21 +1,27 @@
-import React, { useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import TextInput from "../../components/TextInput/TextInput";
 import { InputTypes } from "../../components/TextInput/TextInput.types";
 import Button from "../../components/Button/Button";
 import { LoginWrapper, LoginContent } from "./Login.styles";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import firebase, {
   getAuth,
   signInWithPhoneNumber,
   RecaptchaVerifier,
 } from "../../services/firebase";
 import { createUser, verifyUser } from "../../actions/actions";
+import qs from "query-string";
+import { useUserActions } from "../../store/userStore";
 
 const Login = () => {
   const auth = getAuth(firebase);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const setLoggedInUser = useUserActions().setLoggedInUser;
 
   const [userAuthObject, setUserAuthObject] = useState<any>(null);
+  const [readyToRedirect, setReadyToRedirect] = useState(false);
 
   const [phone, setPhone] = useState({
     value: "",
@@ -35,64 +41,77 @@ const Login = () => {
   const confirmationResultRef = useRef<any>();
   const getOtpButtonRef = useRef<any>();
 
-  const signIn = (recaptchaVerifier: any) => {
-    signInWithPhoneNumber(auth, `+91${phone.value}`, recaptchaVerifier)
-      .then((confirmationResult) => {
-        confirmationResultRef.current = confirmationResult;
-        setEnableOTP(true);
-      })
-      .catch((error) => {
-        alert("Pls refresh the page and try again");
-      });
+  const signIn = async (recaptchaVerifier: any) => {
+    try {
+      const confirmationResult = await signInWithPhoneNumber(
+        auth,
+        `+91${phone.value}`,
+        recaptchaVerifier
+      );
+      confirmationResultRef.current = confirmationResult;
+      setEnableOTP(true);
+    } catch (error) {
+      alert("Pls refresh the page and try again");
+    }
   };
 
-  const sendOTP = () => {
+  const sendOTP = async () => {
     // Setup recaptcha to be triggered from the signInWithPhoneNumber call internally
     const recaptchaVerifier = new RecaptchaVerifier(
       auth,
       getOtpButtonRef.current,
       {
         size: "invisible",
-        callback: () => {
-          signIn(recaptchaVerifier);
-        },
+        callback: () => {},
       }
     );
-    signIn(recaptchaVerifier);
+    await signIn(recaptchaVerifier);
   };
 
-  const onSubmitOtp = () => {
-    confirmationResultRef.current
-      .confirm(otp.value)
-      .then((result: any) => {
-        setUserAuthObject({
-          ...result.user.reloadUserInfo,
-          uid: result.user.uid,
-        });
-        verifyUser({ uid: result.user.uid }).then((res: any) => {
-          if (res?.isNewUser) {
-            setNewUser(true);
-          } else {
-            navigate("/restaurants", {
-              replace: true,
-            });
-          }
-        });
-      })
-      .catch(() => {
-        alert("Invalid OTP. Try again");
+  const redirectUser = useCallback(() => {
+    setTimeout(() => {
+      navigate("/restaurants", {
+        replace: true,
       });
+    });
+  }, [navigate]);
+
+  const onSubmitOtp = async () => {
+    try {
+      const result = await confirmationResultRef.current.confirm(otp.value);
+
+      setUserAuthObject({
+        ...result.user.reloadUserInfo,
+        uid: result.user.uid,
+      });
+
+      const userResponse = await verifyUser({
+        phoneNumber: result.user.phoneNumber,
+      });
+      if (userResponse?.isNewUser) {
+        setNewUser(true);
+      } else {
+        setLoggedInUser(userResponse);
+        setReadyToRedirect(true);
+      }
+    } catch (error) {
+      alert("Try again");
+    }
   };
 
-  const signUpUser = () => {
+  const signUpUser = async () => {
     // BE API to add user and navigate to next page
-    createUser({
+    const response = await createUser({
       name: name.value,
       ...userAuthObject,
-    }).then((res) => {
-      console.log("12345", res);
     });
+    setLoggedInUser(response);
+    setReadyToRedirect(true);
   };
+
+  useEffect(() => {
+    if (readyToRedirect) redirectUser();
+  }, [readyToRedirect, redirectUser]);
 
   return (
     <LoginWrapper>

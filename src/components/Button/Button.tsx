@@ -8,8 +8,12 @@ const Button = React.forwardRef(
     ref: any
   ) => {
     return (
-      <ButtonContainer disabled={!!isDisabled} className={className}>
-        <StyledButton ref={ref} type={type} onClick={onClick}>
+      <ButtonContainer
+        className={className}
+        disabled={!!isDisabled}
+        onClick={onClick}
+      >
+        <StyledButton ref={ref} type={type}>
           {children}
         </StyledButton>
       </ButtonContainer>

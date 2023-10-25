@@ -10,4 +10,6 @@ export const AppHeaderWrapper = styled.div`
   font-size: 20px;
   font-weight: 600;
   height: ${APP_HEADER_HEIGHT}px;
+  display: flex;
+  justify-content: space-between;
 `;
