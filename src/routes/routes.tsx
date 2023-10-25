@@ -3,6 +3,7 @@ import Login from "../containers/Login/Login";
 import AppRoot from "../containers/AppRoot/AppRoot";
 import Restaurants from "../containers/Restaurants/Restaurants";
 import AddRestaurant from "../containers/AddRestaurant/AddRestaurant";
+import Menu from "../containers/Menu/Menu";
 
 const routes: RouteObject[] = [
   {
@@ -20,6 +21,10 @@ const routes: RouteObject[] = [
       {
         path: "/add-restaurant",
         element: <AddRestaurant />,
+      },
+      {
+        path: "/menu",
+        element: <Menu />,
       },
     ],
   },
