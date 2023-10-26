@@ -1,9 +1,8 @@
 import { styled } from "styled-components";
-import { APP_HEADER_HEIGHT } from "../../common/constants";
 
 export const RestaurantsWrapper = styled.div`
   padding: 10px;
-  height: calc(100vh - ${APP_HEADER_HEIGHT}px);
+  height: 100%;
   display: flex;
 `;
 
@@ -40,8 +39,4 @@ export const ListItem = styled.div`
 export const AddCta = styled.div`
   margin: auto 0;
   width: 100%;
-`;
-
-export const LoadingWrapper = styled.div`
-  margin: auto;
 `;

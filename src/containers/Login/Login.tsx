@@ -70,11 +70,18 @@ const Login = () => {
 
   const redirectUser = useCallback(() => {
     setTimeout(() => {
-      navigate("/restaurants", {
-        replace: true,
-      });
+      if (location.search) {
+        const redirectUrl = qs.parse(location.search).redirect;
+        navigate((redirectUrl as string).substring(1), {
+          replace: true,
+        });
+      } else {
+        navigate("/", {
+          replace: true,
+        });
+      }
     });
-  }, [navigate]);
+  }, [location.search, navigate]);
 
   const onSubmitOtp = async () => {
     try {

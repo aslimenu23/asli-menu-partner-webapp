@@ -1,8 +1,7 @@
 import { styled } from "styled-components";
-import { APP_HEADER_HEIGHT } from "../../common/constants";
 
 export const LoginWrapper = styled.div`
-  height: calc(100vh - ${APP_HEADER_HEIGHT}px);
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;

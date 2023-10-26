@@ -11,12 +11,12 @@ const routes: RouteObject[] = [
     element: <AppRoot />,
     children: [
       {
-        path: "/login",
-        element: <Login />,
+        index: true,
+        element: <Restaurants />,
       },
       {
-        path: "/restaurants",
-        element: <Restaurants />,
+        path: "/login",
+        element: <Login />,
       },
       {
         path: "/add-restaurant",

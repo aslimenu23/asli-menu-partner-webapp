@@ -1,6 +1,24 @@
 import { styled } from "styled-components";
 
-export const StyledLoader = styled.div`
+export const LoadingWrapper = styled.div<{ isFullScreen?: boolean }>`
+  ${({ isFullScreen }) =>
+    isFullScreen &&
+    `
+    width: 100vw;  
+    height: 100vh;  
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+
+    > div {
+      margin: auto;
+    }
+  `})}
+`;
+
+export const StyledLoader = styled.div<{ isFullScreen?: boolean }>`
   display: inline-block;
   position: relative;
   width: 80px;

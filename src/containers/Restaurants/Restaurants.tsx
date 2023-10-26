@@ -3,7 +3,6 @@ import {
   AddCta,
   List,
   ListItem,
-  LoadingWrapper,
   RestaurantsWrapper,
 } from "./Restaurants.styles";
 import Loader from "../../components/Loader/Loader";
@@ -39,9 +38,7 @@ const Restaurants = () => {
   return (
     <RestaurantsWrapper>
       {loading ? (
-        <LoadingWrapper>
-          <Loader />
-        </LoadingWrapper>
+        <Loader isFullScreen />
       ) : (
         <>
           {restaurants.length ? renderList() : <></>}

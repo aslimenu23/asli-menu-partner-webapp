@@ -1,14 +1,16 @@
 import React from "react";
-import { StyledLoader } from "./Loader.styles";
+import { StyledLoader, LoadingWrapper } from "./Loader.styles";
 
-const Loader = () => {
+const Loader = ({ isFullScreen }: { isFullScreen?: boolean }) => {
   return (
-    <StyledLoader className="lds-ring">
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-    </StyledLoader>
+    <LoadingWrapper isFullScreen={isFullScreen}>
+      <StyledLoader isFullScreen={isFullScreen} className="lds-ring">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </StyledLoader>
+    </LoadingWrapper>
   );
 };
 
