@@ -9,6 +9,7 @@ import {
   AppRootHeaderWrapper,
   AppRootWrapper,
 } from "./AppRoot.styles";
+import { removeItemInLocalStorageWithAsliMenuPrefix } from "../../common/utils";
 
 const AppRoot = () => {
   const navigate = useNavigate();
@@ -37,6 +38,10 @@ const AppRoot = () => {
       }
       setLoading(false);
     });
+
+    return () => {
+      removeItemInLocalStorageWithAsliMenuPrefix();
+    };
   }, []);
 
   return (

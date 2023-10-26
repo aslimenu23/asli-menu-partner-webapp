@@ -1,4 +1,4 @@
-import { CATEGORY, DISH_TYPES } from "./AddMenu.types";
+import { CATEGORY, DISH_TYPES } from "./MenuForm.types";
 
 export const DISH_TYPES_LIST = [
   {
