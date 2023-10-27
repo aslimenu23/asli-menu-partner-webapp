@@ -16,8 +16,15 @@ export const createUser = async (userObject: {
   phoneNumber: string;
 }) => {
   try {
-    console.log("payload_12345", userObject);
     const data = await axios.post(API_ENDPOINTS.user, userObject);
+    return data.data;
+  } catch (err) {}
+};
+
+export const restaurantDetails = async (payload: any) => {
+  try {
+    console.log("payload_12345", payload);
+    const data = await axios.post(API_ENDPOINTS.restaurant, payload);
     return data.data;
   } catch (err) {}
 };

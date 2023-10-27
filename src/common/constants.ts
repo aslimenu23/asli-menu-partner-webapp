@@ -7,3 +7,10 @@ export const MAX_RESTAURANT_TIMINGS_COUNT = 2;
 export const APP_HEADER_HEIGHT = 65;
 
 export const PHONE_PREFIX = "+91";
+
+export const ROUTES = {
+  RESTAURANTS: "/",
+  ADD_RESTAURANT: "add-restaurant",
+  LOGIN: "/login",
+  MENU: "/menu",
+};

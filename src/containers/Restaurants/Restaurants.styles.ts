@@ -2,8 +2,6 @@ import { styled } from "styled-components";
 
 export const RestaurantsWrapper = styled.div`
   padding: 10px;
-  height: 100%;
-  display: flex;
 `;
 
 export const List = styled.div`
@@ -23,6 +21,8 @@ export const ListItem = styled.div`
   border: 1px solid #f2f2f2;
   margin: 5px 0;
   border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
 
   &:hover {
     background-color: #f2f2f2;
@@ -37,6 +37,7 @@ export const ListItem = styled.div`
 `;
 
 export const AddCta = styled.div`
-  margin: auto 0;
-  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 30px 0;
 `;

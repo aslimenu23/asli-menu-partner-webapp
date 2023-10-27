@@ -12,4 +12,5 @@ export type InputProps = {
 export enum InputTypes {
   MOBILE = "mobile",
   OTP = "otp",
+  NUMBER = "number",
 }

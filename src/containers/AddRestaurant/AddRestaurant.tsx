@@ -15,11 +15,13 @@ import {
   MAX_RESTAURANT_PHONE_COUNT,
   MAX_RESTAURANT_PHOTO_COUNT,
   MAX_RESTAURANT_TIMINGS_COUNT,
+  ROUTES,
 } from "../../common/constants";
 import ImageInput from "../../components/ImageInput/ImageInput";
 import { useNavigate } from "react-router-dom";
 import TimePicker from "../../components/TimePicker/TimePicker";
 import { SetTiming, Timing } from "./AddRestaurant.types";
+import { restaurantDetails } from "../../actions/actions";
 
 const AddRestaurant = () => {
   const navigate = useNavigate();
@@ -35,23 +37,63 @@ const AddRestaurant = () => {
 
   // Timings
   const [restaurantTimings, setRestaurantTimings] = useState<Timing[]>([
-    { from: "", to: "" },
+    { startTime: "", endTime: "" },
   ]);
   const [takeawayTimings, setTakeawayTimings] = useState<Timing[]>([
-    { from: "", to: "" },
+    { startTime: "", endTime: "" },
   ]);
   const [deliveryTimings, setDeliveryTimings] = useState<Timing[]>([
-    { from: "", to: "" },
+    { startTime: "", endTime: "" },
   ]);
 
-  const onSubmit = (event: any) => {
+  const onSubmit = async (event: any) => {
     event.preventDefault();
     const formData = new FormData(event.target);
+    const formDataObject = Object.fromEntries(formData.entries());
 
-    // API call to save the changes in the BE
+    const {
+      name,
+      location,
+      fullAddress,
+      cuisine,
+      area,
+      freeDeliveryDistance,
+      avgPrice,
+    } = formDataObject;
+    const payload = {
+      name,
+      images,
+      phoneNumbers,
+      avgPrice,
+      cuisines: (cuisine as string).split(",").map((cuisine) => cuisine.trim()),
+      location: {
+        gmapLink: location,
+        areaName: area,
+        fullAddress,
+      },
+      dineInDetails: {
+        enabled: dineIn,
+        timings: restaurantTimings,
+        freeDeliveryDistance,
+      },
+      takeAwayDetails: {
+        enabled: takeaway,
+        timings: takeawayTimings,
+      },
+      deliveryDetails: {
+        enabled: delivery,
+        timings: deliveryTimings,
+      },
+    };
 
-    console.log("Formdata_12345", Object.fromEntries(formData.entries()));
-    navigate("/restaurants", { replace: true });
+    /**
+     * Add restaurant -> Add menu
+     */
+
+    // const response = await restaurantDetails(payload);
+    // console.log("12345", response);
+
+    navigate(ROUTES.RESTAURANTS, { replace: true });
   };
 
   const renderPhoneNumbers = () => {
@@ -76,7 +118,7 @@ const AddRestaurant = () => {
         <PhoneNumbersWrapper key={index}>
           <TextInput
             noMargin
-            // isRequired={index < MAX_RESTAURANT_PHONE_COUNT / 2}
+            isRequired={index < MAX_RESTAURANT_PHONE_COUNT / 2}
             label={`Phone number ${index + 1}`}
             name={`phone_${index + 1}`}
             defaultValue={phoneNumber[index]}
@@ -119,7 +161,7 @@ const AddRestaurant = () => {
         <PhoneNumbersWrapper key={index}>
           <ImageInput
             noMargin
-            // isRequired={index < MAX_RESTAURANT_PHOTO_COUNT / 2}
+            isRequired={index < MAX_RESTAURANT_PHOTO_COUNT / 2}
             name={`image_${index + 1}`}
             label={`Upload restaurant photo ${index + 1}`}
             onChange={(file) => onImageUpload(file, index)}
@@ -150,7 +192,7 @@ const AddRestaurant = () => {
     title: string;
   }) => {
     const addTime = () => {
-      updateStateFunction([...stateKey, { from: "", to: "" }]);
+      updateStateFunction([...stateKey, { startTime: "", endTime: "" }]);
     };
 
     const removeTime = (index: number) => {
@@ -171,15 +213,15 @@ const AddRestaurant = () => {
           <label>{title}</label>
           <div>
             <TimePicker
-              label="From"
+              label="Start Time"
               name={`${nameKey}_from_${index + 1}`}
-              value={stateKey[index].from}
+              value={stateKey[index].startTime}
               onChange={(value) => onTimeChange(value, index)}
             />
             <TimePicker
-              label="To"
+              label="End Time"
               name={`${nameKey}_to_${index + 1}`}
-              value={stateKey[index].to}
+              value={stateKey[index].endTime}
               onChange={(value) => onTimeChange(value, index)}
             />
             <AddDeleteIcon
@@ -200,27 +242,21 @@ const AddRestaurant = () => {
   return (
     <AddRestaurantWrapper>
       <form onSubmit={onSubmit}>
-        <TextInput // isRequired
-          label="Restaurant Name"
-          name="name"
-        />
+        <TextInput isRequired label="Restaurant Name" name="name" />
         <TextInput
-          // isRequired
+          isRequired
           label="Restaurant Location"
           name="location"
           placeholder="Paste map link here"
         />
         <TextInput
-          // isRequired
+          isRequired
           label="Restaurant Full Address"
           name="fullAddress"
         />
-        <TextInput // isRequired
-          label="Restaurant Cuisine"
-          name="cuisine"
-        />
+        <TextInput isRequired label="Restaurant Cuisine" name="cuisine" />
         <Select
-          // isRequired
+          isRequired
           label="Restaurant Area"
           name="area"
           list={AREA_TYPES_LIST}
@@ -229,6 +265,12 @@ const AddRestaurant = () => {
           label="Free delivery distance"
           name="freeDeliveryDistance"
           placeholder="Distance in kms"
+          inputType={InputTypes.NUMBER}
+        />
+        <TextInput
+          label="Avg. Price"
+          name="avgPrice"
+          inputType={InputTypes.NUMBER}
         />
         {renderPhoneNumbers()}
         {renderPhotoUploadInputs()}

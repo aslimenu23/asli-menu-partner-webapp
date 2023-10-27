@@ -12,6 +12,7 @@ import firebase, {
 import { createUser, verifyUser } from "../../actions/actions";
 import qs from "query-string";
 import { useUserActions } from "../../store/userStore";
+import { ROUTES } from "../../common/constants";
 
 const Login = () => {
   const auth = getAuth(firebase);
@@ -76,7 +77,7 @@ const Login = () => {
           replace: true,
         });
       } else {
-        navigate("/", {
+        navigate(ROUTES.RESTAURANTS, {
           replace: true,
         });
       }

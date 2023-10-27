@@ -11,6 +11,10 @@ export const checkIfValidInput = (value: any, inputType?: InputTypes) => {
       const otpPattern = /^\d{6}$/;
       const isValidOtp = value.match(otpPattern);
       return isValidOtp;
+    case InputTypes.NUMBER:
+      const numberPattern = /^\d+$/;
+      const isValidNumber = value.match(numberPattern);
+      return isValidNumber;
     default:
       return true;
   }
