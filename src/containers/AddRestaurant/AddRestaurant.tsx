@@ -105,8 +105,7 @@ const AddRestaurant = () => {
      * Add restaurant -> Add menu
      */
 
-    // const response = await restaurantDetails(payload);
-    // console.log("12345", response);
+    const response = await restaurantDetails(payload);
 
     // Edit flow
     if (editedRestaurant) {
@@ -221,9 +220,10 @@ const AddRestaurant = () => {
       updateStateFunction([...stateKey]);
     };
 
-    const onTimeChange = (value: any, index: number) => {
+    const onTimeChange = (value: any, index: number, key: string) => {
       updateStateFunction((prevTimings) => {
-        prevTimings[index] = value;
+        // @ts-ignore
+        prevTimings[index][key] = value;
         return [...prevTimings];
       });
     };
@@ -237,13 +237,13 @@ const AddRestaurant = () => {
               label="Start Time"
               name={`${nameKey}_from_${index + 1}`}
               value={stateKey[index].startTime}
-              onChange={(value) => onTimeChange(value, index)}
+              onChange={(value) => onTimeChange(value, index, "startTime")}
             />
             <TimePicker
               label="End Time"
               name={`${nameKey}_to_${index + 1}`}
               value={stateKey[index].endTime}
-              onChange={(value) => onTimeChange(value, index)}
+              onChange={(value) => onTimeChange(value, index, "endTime")}
             />
             <AddDeleteIcon
               index={index}
@@ -310,6 +310,13 @@ const AddRestaurant = () => {
         />
         {renderPhoneNumbers()}
         {renderPhotoUploadInputs()}
+        {renderTimings({
+          stateKey: restaurantTimings,
+          updateStateFunction: setRestaurantTimings,
+          nameKey: "restaurantTimings",
+          title: "Restaurant Timings",
+        })}
+
         <Checkbox
           label="Is managed by owner?"
           name="isManagedByOwner"
@@ -322,16 +329,6 @@ const AddRestaurant = () => {
           value={dineIn.toString()}
           onChange={(value) => setDineIn(value)}
         />
-        {dineIn ? (
-          renderTimings({
-            stateKey: restaurantTimings,
-            updateStateFunction: setRestaurantTimings,
-            nameKey: "restaurantTimings",
-            title: "Restaurant Timings",
-          })
-        ) : (
-          <></>
-        )}
 
         <Checkbox
           label="Takeaway"

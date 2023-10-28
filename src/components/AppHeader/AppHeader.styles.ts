@@ -1,6 +1,10 @@
 import { styled } from "styled-components";
+import { APP_HEADER_HEIGHT } from "../../common/constants";
 
 export const AppHeaderWrapper = styled.div`
+  width: 100%;
+  height: ${APP_HEADER_HEIGHT}px;
+
   position: sticky;
   top: 0;
   background: white;
@@ -10,4 +14,5 @@ export const AppHeaderWrapper = styled.div`
   font-weight: 600;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 `;

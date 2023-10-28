@@ -1,33 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import AppHeader from "../../components/AppHeader/AppHeader";
-import { useUserStates } from "../../store/userStore";
+import { useUserActions, useUserStates } from "../../store/userStore";
 import firebase, { getAuth, onAuthStateChanged } from "../../services/firebase";
 import Loader from "../../components/Loader/Loader";
-import {
-  AppRootContentWrapper,
-  AppRootHeaderWrapper,
-  AppRootWrapper,
-} from "./AppRoot.styles";
+import { AppRootContentWrapper, AppRootWrapper } from "./AppRoot.styles";
 import { removeItemInLocalStorageWithAsliMenuPrefix } from "../../common/utils";
+import { getUser } from "../../actions/actions";
+import { ROUTES } from "../../common/constants";
 
 const AppRoot = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const loggedInUser = useUserStates().loggedInUser;
+  const setLoggedInUser = useUserActions().setLoggedInUser;
 
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const auth = getAuth(firebase);
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user: any) => {
       // If user is logged in and lands on login page, redirect to home page
       if (user) {
-        if (location.pathname === "/login") {
-          navigate(`/`, {
-            replace: true,
-          });
-        }
+        const userDetails = await getUser(user.uid);
+        setLoggedInUser(userDetails);
       } else {
         // If user is not logged in and lands on any page, redirect to login page
         if (location.pathname !== "/login") {
@@ -40,15 +36,21 @@ const AppRoot = () => {
     });
 
     return () => {
-      // removeItemInLocalStorageWithAsliMenuPrefix();
+      removeItemInLocalStorageWithAsliMenuPrefix();
     };
+    // To be run only once when we land on the APP
   }, []);
+
+  useEffect(() => {
+    if (loggedInUser && location.pathname === "/login") {
+      navigate(ROUTES.RESTAURANTS, { replace: true });
+    }
+    // To be run when we land on a new page
+  }, [location.pathname, loggedInUser, navigate]);
 
   return (
     <AppRootWrapper>
-      <AppRootHeaderWrapper>
-        <AppHeader loggedInUser={loggedInUser} />
-      </AppRootHeaderWrapper>
+      <AppHeader loggedInUser={loggedInUser} />
       <AppRootContentWrapper>
         {loading ? <Loader isFullScreen /> : <Outlet />}
       </AppRootContentWrapper>

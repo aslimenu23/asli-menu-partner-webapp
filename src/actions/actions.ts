@@ -1,6 +1,13 @@
 import { API_ENDPOINTS } from "./endpoints";
 import axios from "axios";
 
+export const getUser = async (firebaseUid: string) => {
+  try {
+    const data = await axios.get(`${API_ENDPOINTS.user}${firebaseUid}`);
+    return data.data;
+  } catch (err) {}
+};
+
 export const verifyUser = async ({ phoneNumber }: { phoneNumber: string }) => {
   try {
     const data = await axios.post(API_ENDPOINTS.isNewUser, {
@@ -21,9 +28,9 @@ export const createUser = async (userObject: {
   } catch (err) {}
 };
 
+// Action to add/edit restaurant details
 export const restaurantDetails = async (payload: any) => {
   try {
-    console.log("payload_12345", payload);
     const data = await axios.post(API_ENDPOINTS.restaurant, payload);
     return data.data;
   } catch (err) {}

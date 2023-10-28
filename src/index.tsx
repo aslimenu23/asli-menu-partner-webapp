@@ -8,11 +8,7 @@ import reportWebVitals from "./scripts/reportWebVitals";
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
-root.render(
-  <React.StrictMode>
-    <AppRoutes />
-  </React.StrictMode>
-);
+root.render(<AppRoutes />);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
