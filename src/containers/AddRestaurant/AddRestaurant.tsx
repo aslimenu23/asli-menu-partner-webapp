@@ -18,33 +18,48 @@ import {
   ROUTES,
 } from "../../common/constants";
 import ImageInput from "../../components/ImageInput/ImageInput";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import TimePicker from "../../components/TimePicker/TimePicker";
 import { SetTiming, Timing } from "./AddRestaurant.types";
 import { restaurantDetails } from "../../actions/actions";
 
 const AddRestaurant = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const editedRestaurant = location.state?.restaurant || {};
 
   // Basic details
-  const [phoneNumbers, setPhoneNumbers] = useState<any[]>([""]);
-  const [images, setImages] = useState([{}]);
+  const [phoneNumbers, setPhoneNumbers] = useState<any[]>(
+    editedRestaurant.phoneNumbers || [""]
+  );
+  const [images, setImages] = useState(editedRestaurant.images || [{}]);
 
   // boolean
-  const [dineIn, setDineIn] = useState(false);
-  const [takeaway, setTakeaway] = useState(false);
-  const [delivery, setDelivery] = useState(false);
+  const [dineIn, setDineIn] = useState(
+    !!editedRestaurant.dineInDetails?.enabled
+  );
+  const [takeaway, setTakeaway] = useState(
+    !!editedRestaurant.takeAwayDetails?.enabled
+  );
+  const [delivery, setDelivery] = useState(
+    !!editedRestaurant.deliveryDetails?.enabled
+  );
 
   // Timings
-  const [restaurantTimings, setRestaurantTimings] = useState<Timing[]>([
-    { startTime: "", endTime: "" },
-  ]);
-  const [takeawayTimings, setTakeawayTimings] = useState<Timing[]>([
-    { startTime: "", endTime: "" },
-  ]);
-  const [deliveryTimings, setDeliveryTimings] = useState<Timing[]>([
-    { startTime: "", endTime: "" },
-  ]);
+  const [restaurantTimings, setRestaurantTimings] = useState<Timing[]>(
+    editedRestaurant.dineInDetails?.timings || [{ startTime: "", endTime: "" }]
+  );
+  const [takeawayTimings, setTakeawayTimings] = useState<Timing[]>(
+    editedRestaurant.takeawayDetails?.timings || [
+      { startTime: "", endTime: "" },
+    ]
+  );
+  const [deliveryTimings, setDeliveryTimings] = useState<Timing[]>(
+    editedRestaurant.deliveryDetails?.timings || [
+      { startTime: "", endTime: "" },
+    ]
+  );
 
   const onSubmit = async (event: any) => {
     event.preventDefault();
@@ -93,7 +108,13 @@ const AddRestaurant = () => {
     // const response = await restaurantDetails(payload);
     // console.log("12345", response);
 
-    navigate(ROUTES.RESTAURANTS, { replace: true });
+    // Edit flow
+    if (editedRestaurant) {
+      navigate(ROUTES.RESTAURANTS, { replace: true });
+    } else {
+      // Add flow
+      navigate(ROUTES.MENU, { replace: true });
+    }
   };
 
   const renderPhoneNumbers = () => {
@@ -150,13 +171,13 @@ const AddRestaurant = () => {
     };
 
     const onImageUpload = (file: any, index: number) => {
-      setImages((prevImages) => {
+      setImages((prevImages: any) => {
         prevImages[index] = file;
         return [...prevImages];
       });
     };
 
-    const currentImages = images.map((image, index) => {
+    const currentImages = images.map((image: any, index: number) => {
       return (
         <PhoneNumbersWrapper key={index}>
           <ImageInput
@@ -207,7 +228,7 @@ const AddRestaurant = () => {
       });
     };
 
-    const currentTimings = images.map((time, index) => {
+    const currentTimings = images.map((time: any, index: number) => {
       return (
         <TimingsWrapper key={index}>
           <label>{title}</label>
@@ -242,39 +263,58 @@ const AddRestaurant = () => {
   return (
     <AddRestaurantWrapper>
       <form onSubmit={onSubmit}>
-        <TextInput isRequired label="Restaurant Name" name="name" />
+        <TextInput
+          isRequired
+          label="Restaurant Name"
+          name="name"
+          defaultValue={editedRestaurant.name}
+        />
         <TextInput
           isRequired
           label="Restaurant Location"
           name="location"
           placeholder="Paste map link here"
+          defaultValue={editedRestaurant.location?.gmapLink}
         />
         <TextInput
           isRequired
           label="Restaurant Full Address"
           name="fullAddress"
+          defaultValue={editedRestaurant.location?.fullAddress}
         />
-        <TextInput isRequired label="Restaurant Cuisine" name="cuisine" />
+        <TextInput
+          isRequired
+          label="Restaurant Cuisine"
+          name="cuisine"
+          defaultValue={editedRestaurant.cuisines?.join(", ")}
+        />
         <Select
           isRequired
           label="Restaurant Area"
           name="area"
           list={AREA_TYPES_LIST}
+          defaultValue={editedRestaurant.location?.areaName}
         />
         <TextInput
           label="Free delivery distance"
           name="freeDeliveryDistance"
           placeholder="Distance in kms"
           inputType={InputTypes.NUMBER}
+          defaultValue={editedRestaurant.deliveryDetails?.freeDeliveryDistance}
         />
         <TextInput
           label="Avg. Price"
           name="avgPrice"
           inputType={InputTypes.NUMBER}
+          defaultValue={editedRestaurant.avgPrice}
         />
         {renderPhoneNumbers()}
         {renderPhotoUploadInputs()}
-        <Checkbox label="Is managed by owner?" name="isManagedByOwner" />
+        <Checkbox
+          label="Is managed by owner?"
+          name="isManagedByOwner"
+          defaultValue={editedRestaurant.isManagedByOwner}
+        />
 
         <Checkbox
           label="Dine in"

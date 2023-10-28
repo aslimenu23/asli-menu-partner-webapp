@@ -40,7 +40,7 @@ const AppRoot = () => {
     });
 
     return () => {
-      removeItemInLocalStorageWithAsliMenuPrefix();
+      // removeItemInLocalStorageWithAsliMenuPrefix();
     };
   }, []);
 

@@ -7,7 +7,12 @@ import {
 } from "./Restaurants.styles";
 import Loader from "../../components/Loader/Loader";
 import { useNavigate } from "react-router-dom";
-import { AiFillPlusSquare, AiTwotoneEdit } from "react-icons/ai";
+import {
+  AiFillPlusSquare,
+  AiTwotoneDelete,
+  AiTwotoneEdit,
+  AiFillBook,
+} from "react-icons/ai";
 import { ROUTES } from "../../common/constants";
 
 const Restaurants = () => {
@@ -18,15 +23,35 @@ const Restaurants = () => {
 
   useEffect(() => {
     // API to fetch restaurants
-    setRestaurants([]);
+    setRestaurants([{ name: "Some Restaurant" }]);
     setLoading(false);
   }, []);
+
+  const onDelete = (index: number) => {
+    restaurants.splice(index, 1);
+    setRestaurants([...restaurants]);
+  };
 
   const renderList = () => {
     const items = restaurants.map((r, index) => {
       return (
         <ListItem key={index}>
-          {r.name} <AiTwotoneEdit size={20} />
+          <div>{r.name}</div>
+          <div className="footer">
+            <AiTwotoneEdit
+              size={20}
+              onClick={() => {
+                navigate(ROUTES.ADD_RESTAURANT, { state: { restaurant: r } });
+              }}
+            />
+            <AiTwotoneDelete size={20} onClick={() => onDelete(index)} />
+            <AiFillBook
+              size={20}
+              onClick={() => {
+                navigate(ROUTES.MENU, { state: { restaurant: r } });
+              }}
+            />
+          </div>
         </ListItem>
       );
     });

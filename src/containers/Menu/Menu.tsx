@@ -4,22 +4,22 @@ import MenuForm from "./MenuForm/MenuForm";
 import MenuList from "./MenuList/MenuList";
 import { AiFillPlusSquare } from "react-icons/ai";
 import { LOCAL_STORAGE_KEY_REFIX } from "../../common/constants";
-import {
-  getItemInLocalStorage,
-  setItemInLocalStorage,
-} from "../../common/utils";
 import Loader from "../../components/Loader/Loader";
+import { useLocation } from "react-router-dom";
 
 const Menu = () => {
+  const location = useLocation();
+
   const [menu, setMenu] = useState<any[]>([]);
   const [showAddForm, setShowAddForm] = useState(false);
 
   const localStorageKey = useMemo(() => `${LOCAL_STORAGE_KEY_REFIX}menu`, []);
 
   useEffect(() => {
-    // BE API to fetch menu and also set menu to local storage
-    setMenu(getItemInLocalStorage(localStorageKey, []));
-  }, [localStorageKey]);
+    // BE API to fetch menu for the restaurant
+    const currentRestaurant = location.state?.restaurant;
+    setMenu([]);
+  }, [localStorageKey, location.state?.restaurant]);
 
   const onAddItem = (item: any) => {
     setMenu([...menu, item]);
@@ -33,10 +33,6 @@ const Menu = () => {
   const toggleForm = () => {
     setShowAddForm((value) => !value);
   };
-
-  useEffect(() => {
-    setItemInLocalStorage(localStorageKey, JSON.stringify(menu));
-  }, [localStorageKey, menu]);
 
   if (!menu) return <Loader isFullScreen />;
   return (

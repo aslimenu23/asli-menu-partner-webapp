@@ -16,16 +16,27 @@ export const List = styled.div`
 `;
 
 export const ListItem = styled.div`
-  padding: 10px;
   width: 100%;
-  border: 1px solid #f2f2f2;
+  border: 1px solid #8e8e8e;
   margin: 5px 0;
   border-radius: 10px;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
 
-  &:hover {
-    background-color: #f2f2f2;
+  > * {
+    padding: 10px;
+  }
+
+  .footer {
+    width: 100%;
+    border-top: 1px solid #8e8e8e;
+    display: flex;
+    justify-content: space-around;
+    padding: 10px;
+
+    > * {
+      flex: 1;
+    }
   }
 
   // Desktop
