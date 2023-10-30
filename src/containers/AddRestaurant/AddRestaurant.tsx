@@ -21,11 +21,14 @@ import ImageInput from "../../components/ImageInput/ImageInput";
 import { useLocation, useNavigate } from "react-router-dom";
 import TimePicker from "../../components/TimePicker/TimePicker";
 import { SetTiming, Timing } from "./AddRestaurant.types";
-import { restaurantDetails } from "../../actions/actions";
+import { saveRestaurantDetails } from "../../actions/actions";
+import { useUserStates } from "../../store/userStore";
 
 const AddRestaurant = () => {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const loggedInUser = useUserStates().loggedInUser;
 
   const editedRestaurant = location.state?.restaurant || {};
 
@@ -76,6 +79,7 @@ const AddRestaurant = () => {
       avgPrice,
     } = formDataObject;
     const payload = {
+      user: loggedInUser,
       name,
       images,
       phoneNumbers,
@@ -91,29 +95,33 @@ const AddRestaurant = () => {
         timings: restaurantTimings,
         freeDeliveryDistance,
       },
-      takeAwayDetails: {
-        enabled: takeaway,
-        timings: takeawayTimings,
-      },
-      deliveryDetails: {
-        enabled: delivery,
-        timings: deliveryTimings,
-      },
+      takeAwayDetails: takeaway
+        ? {
+            enabled: takeaway,
+            timings: takeawayTimings,
+          }
+        : null,
+      deliveryDetails: delivery
+        ? {
+            enabled: delivery,
+            timings: deliveryTimings,
+          }
+        : null,
     };
 
     /**
      * Add restaurant -> Add menu
      */
 
-    const response = await restaurantDetails(payload);
+    const response = await saveRestaurantDetails(payload);
 
     // Edit flow
-    if (editedRestaurant) {
-      navigate(ROUTES.RESTAURANTS, { replace: true });
-    } else {
-      // Add flow
-      navigate(ROUTES.MENU, { replace: true });
-    }
+    // if (editedRestaurant) {
+    //   navigate(ROUTES.RESTAURANTS, { replace: true });
+    // } else {
+    //   // Add flow
+    //   navigate(ROUTES.MENU, { replace: true });
+    // }
   };
 
   const renderPhoneNumbers = () => {

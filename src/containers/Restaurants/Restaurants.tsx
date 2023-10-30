@@ -14,18 +14,24 @@ import {
   AiFillBook,
 } from "react-icons/ai";
 import { ROUTES } from "../../common/constants";
+import { getAllRestaurants } from "../../actions/actions";
+import { useUserStates } from "../../store/userStore";
 
 const Restaurants = () => {
   const [loading, setLoading] = useState(true);
   const [restaurants, setRestaurants] = useState<any[]>([]);
 
+  const loggedInUser = useUserStates().loggedInUser;
+
   const navigate = useNavigate();
 
   useEffect(() => {
-    // API to fetch restaurants
-    setRestaurants([{ name: "Some Restaurant" }]);
-    setLoading(false);
-  }, []);
+    (async function () {
+      const allRestaurants = await getAllRestaurants(loggedInUser);
+      setRestaurants([{ name: "Some Restaurant" }]);
+      setLoading(false);
+    })();
+  }, [loggedInUser]);
 
   const onDelete = (index: number) => {
     restaurants.splice(index, 1);

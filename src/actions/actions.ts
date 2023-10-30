@@ -28,10 +28,39 @@ export const createUser = async (userObject: {
   } catch (err) {}
 };
 
-// Action to add/edit restaurant details
-export const restaurantDetails = async (payload: any) => {
+export const getAllRestaurants = async (user: any) => {
   try {
-    const data = await axios.post(API_ENDPOINTS.restaurant, payload);
+    const customHeaders = {
+      user: user.id,
+    };
+    const data = await axios.get(API_ENDPOINTS.restaurant, {
+      headers: customHeaders,
+    });
+    return data.data;
+  } catch (err) {}
+};
+
+export const getRestaurantDetails = async (restaurantId: string, user: any) => {
+  try {
+    const customHeaders = {
+      user: user.id,
+    };
+    const data = await axios.get(`${API_ENDPOINTS.restaurant}${restaurantId}`, {
+      headers: customHeaders,
+    });
+    return data.data;
+  } catch (err) {}
+};
+
+// Action to add/edit restaurant details
+export const saveRestaurantDetails = async (payload: any) => {
+  try {
+    const customHeaders = {
+      user: payload.user.id,
+    };
+    const data = await axios.post(API_ENDPOINTS.restaurant, payload, {
+      headers: customHeaders,
+    });
     return data.data;
   } catch (err) {}
 };
