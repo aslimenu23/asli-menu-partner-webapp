@@ -19,7 +19,7 @@ const routes: RouteObject[] = [
         element: <Login />,
       },
       {
-        path: "/add-restaurant",
+        path: "/restaurant-details",
         element: <AddRestaurant />,
       },
       {

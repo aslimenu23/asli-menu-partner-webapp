@@ -23,6 +23,7 @@ import TimePicker from "../../components/TimePicker/TimePicker";
 import { SetTiming, Timing } from "./AddRestaurant.types";
 import { saveRestaurantDetails } from "../../actions/actions";
 import { useUserStates } from "../../store/userStore";
+import moment from "moment";
 
 const AddRestaurant = () => {
   const navigate = useNavigate();
@@ -30,7 +31,11 @@ const AddRestaurant = () => {
 
   const loggedInUser = useUserStates().loggedInUser;
 
-  const editedRestaurant = location.state?.restaurant || {};
+  const editedRestaurant = location.state?.restaurant?.editValue;
+
+  if (!editedRestaurant) {
+    navigate(ROUTES.RESTAURANTS, { replace: true });
+  }
 
   // Basic details
   const [phoneNumbers, setPhoneNumbers] = useState<any[]>(
@@ -231,7 +236,7 @@ const AddRestaurant = () => {
     const onTimeChange = (value: any, index: number, key: string) => {
       updateStateFunction((prevTimings) => {
         // @ts-ignore
-        prevTimings[index][key] = value;
+        prevTimings[index][key] = moment(value).format("HH:mm");
         return [...prevTimings];
       });
     };
@@ -244,13 +249,13 @@ const AddRestaurant = () => {
             <TimePicker
               label="Start Time"
               name={`${nameKey}_from_${index + 1}`}
-              value={stateKey[index].startTime}
+              value={moment(stateKey[index].startTime)}
               onChange={(value) => onTimeChange(value, index, "startTime")}
             />
             <TimePicker
               label="End Time"
               name={`${nameKey}_to_${index + 1}`}
-              value={stateKey[index].endTime}
+              value={moment(stateKey[index].endTime)}
               onChange={(value) => onTimeChange(value, index, "endTime")}
             />
             <AddDeleteIcon
@@ -317,7 +322,7 @@ const AddRestaurant = () => {
           defaultValue={editedRestaurant.avgPrice}
         />
         {renderPhoneNumbers()}
-        {renderPhotoUploadInputs()}
+        {/* {renderPhotoUploadInputs()} */}
         {renderTimings({
           stateKey: restaurantTimings,
           updateStateFunction: setRestaurantTimings,

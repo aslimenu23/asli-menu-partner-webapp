@@ -10,7 +10,7 @@ export const PHONE_PREFIX = "+91";
 
 export const ROUTES = {
   RESTAURANTS: "/",
-  ADD_RESTAURANT: "add-restaurant",
+  ADD_RESTAURANT: "restaurant-details",
   LOGIN: "/login",
   MENU: "/menu",
 };

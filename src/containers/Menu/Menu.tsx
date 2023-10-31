@@ -1,25 +1,28 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AddMenuButton, AddMenuWrapper } from "./Menu.styles";
 import MenuForm from "./MenuForm/MenuForm";
 import MenuList from "./MenuList/MenuList";
 import { AiFillPlusSquare } from "react-icons/ai";
-import { LOCAL_STORAGE_KEY_REFIX } from "../../common/constants";
 import Loader from "../../components/Loader/Loader";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import Button from "../../components/Button/Button";
+import { saveMenuDetails } from "../../actions/actions";
+import { useUserStates } from "../../store/userStore";
+import { ROUTES } from "../../common/constants";
 
 const Menu = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const loggedInUser = useUserStates().loggedInUser;
 
   const [menu, setMenu] = useState<any[]>([]);
   const [showAddForm, setShowAddForm] = useState(false);
 
-  const localStorageKey = useMemo(() => `${LOCAL_STORAGE_KEY_REFIX}menu`, []);
+  const currentRestaurant = location.state?.restaurant;
 
   useEffect(() => {
-    // BE API to fetch menu for the restaurant
-    const currentRestaurant = location.state?.restaurant;
-    setMenu([]);
-  }, [localStorageKey, location.state?.restaurant]);
+    setMenu(currentRestaurant?.editValue?.menu || []);
+  }, [currentRestaurant?.editValue?.menu]);
 
   const onAddItem = (item: any) => {
     setMenu([...menu, item]);
@@ -34,6 +37,27 @@ const Menu = () => {
     setShowAddForm((value) => !value);
   };
 
+  const goToRestaurantsPage = () => {
+    navigate(ROUTES.RESTAURANTS, {
+      replace: true,
+    });
+  };
+
+  const saveMenu = async () => {
+    const payload = {
+      restaurantId: currentRestaurant.id,
+      user: loggedInUser,
+      menu,
+    };
+    const response = await saveMenuDetails(payload);
+    if (response) goToRestaurantsPage();
+  };
+
+  // Go to home page if no restaurant is selected
+  if (!currentRestaurant) {
+    goToRestaurantsPage();
+  }
+
   if (!menu) return <Loader isFullScreen />;
   return (
     <AddMenuWrapper>
@@ -45,6 +69,7 @@ const Menu = () => {
           <AiFillPlusSquare size={50} onClick={toggleForm} />
         </AddMenuButton>
       )}
+      {menu.length ? <Button onClick={saveMenu}>Save Menu</Button> : <></>}
     </AddMenuWrapper>
   );
 };

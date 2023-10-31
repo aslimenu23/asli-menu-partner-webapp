@@ -28,21 +28,20 @@ const Restaurants = () => {
   useEffect(() => {
     (async function () {
       const allRestaurants = await getAllRestaurants(loggedInUser);
-      setRestaurants([{ name: "Some Restaurant" }]);
+      setRestaurants(allRestaurants);
       setLoading(false);
     })();
   }, [loggedInUser]);
 
-  const onDelete = (index: number) => {
-    restaurants.splice(index, 1);
-    setRestaurants([...restaurants]);
+  const onDelete = (id: string) => {
+    setRestaurants([...restaurants.filter((r) => r.id !== id)]);
   };
 
   const renderList = () => {
     const items = restaurants.map((r, index) => {
       return (
         <ListItem key={index}>
-          <div>{r.name}</div>
+          <div>{r.restaurant.name}</div>
           <div className="footer">
             <AiTwotoneEdit
               size={20}
@@ -50,7 +49,7 @@ const Restaurants = () => {
                 navigate(ROUTES.ADD_RESTAURANT, { state: { restaurant: r } });
               }}
             />
-            <AiTwotoneDelete size={20} onClick={() => onDelete(index)} />
+            <AiTwotoneDelete size={20} onClick={() => onDelete(r.id)} />
             <AiFillBook
               size={20}
               onClick={() => {

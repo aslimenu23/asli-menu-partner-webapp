@@ -58,9 +58,31 @@ export const saveRestaurantDetails = async (payload: any) => {
     const customHeaders = {
       user: payload.user.id,
     };
-    const data = await axios.post(API_ENDPOINTS.restaurant, payload, {
-      headers: customHeaders,
-    });
+
+    const data = await axios.post(
+      `${API_ENDPOINTS.restaurant}${payload.restaurantId}`,
+      payload,
+      {
+        headers: customHeaders,
+      }
+    );
+    return data.data;
+  } catch (err) {}
+};
+
+export const saveMenuDetails = async (payload: any) => {
+  try {
+    const customHeaders = {
+      user: payload.user.id,
+    };
+
+    const data = await axios.post(
+      `${API_ENDPOINTS.restaurant}${payload.restaurantId}/menu`,
+      payload,
+      {
+        headers: customHeaders,
+      }
+    );
     return data.data;
   } catch (err) {}
 };
