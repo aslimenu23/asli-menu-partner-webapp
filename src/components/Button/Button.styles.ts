@@ -10,12 +10,14 @@ export const ButtonContainer = styled.div<{ disabled: boolean }>`
 `;
 
 export const StyledButton = styled.button`
-  outline: none;
-  border: none;
-
   width: 100%;
   height: 40px;
   margin: 10px 0;
-  background-color: lightblue;
+  border: 1px solid #1a1a1a;
+  color: #1a1a1a;
+  text-transform: uppercase;
+  background-color: #fff;
+  font-weight: bold;
   opacity: 1;
+  border-radius: 5px;
 `;

@@ -4,11 +4,16 @@ import "./index.css";
 import AppRoutes from "./routes/AppRoutes";
 import * as serviceWorkerRegistration from "./scripts/serviceWorkerRegistration";
 import reportWebVitals from "./scripts/reportWebVitals";
+import ErrorBoundary from "./components/ErrorBoundary/ErrorBoundary";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
-root.render(<AppRoutes />);
+root.render(
+  <ErrorBoundary>
+    <AppRoutes />
+  </ErrorBoundary>
+);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

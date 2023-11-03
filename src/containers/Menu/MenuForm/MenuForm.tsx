@@ -4,7 +4,7 @@ import Select from "../../../components/Select/Select";
 import { CATEGORY_LIST, DISH_TYPES_LIST } from "./MenuForm.constants";
 import Checkbox from "../../../components/Checkbox/Checkbox";
 import Button from "../../../components/Button/Button";
-import { MenuFormWrapper } from "./MenuForm.styles";
+import { FormFooter, MenuFormWrapper } from "./MenuForm.styles";
 
 const MenuForm = ({
   item,
@@ -54,8 +54,10 @@ const MenuForm = ({
           label="Is Best Seller?"
           defaultValue={item?.isBestSeller}
         />
-
-        <Button type="submit">Submit</Button>
+        <FormFooter>
+          <Button type="button">Cancel</Button>
+          <Button type="submit">Submit</Button>
+        </FormFooter>
       </form>
     </MenuFormWrapper>
   );

@@ -17,25 +17,29 @@ export const List = styled.div`
 
 export const ListItem = styled.div`
   width: 100%;
-  border: 1px solid #8e8e8e;
+  border: 1px solid #1a1a1a;
   margin: 5px 0;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 
-  > * {
+  .content {
     padding: 10px;
   }
 
   .footer {
     width: 100%;
-    border-top: 1px solid #8e8e8e;
     display: flex;
     justify-content: space-around;
-    padding: 10px;
 
     > * {
       flex: 1;
+      text-align: center;
+      font-weight: bold;
+      background: #1a1a1a;
+      color: white;
+      padding: 10px;
     }
   }
 
@@ -49,6 +53,9 @@ export const ListItem = styled.div`
 
 export const AddCta = styled.div`
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
   padding: 30px 0;
+  color: #1a1a1a;
+  font-weight: bold;
 `;

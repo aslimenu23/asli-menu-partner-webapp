@@ -15,4 +15,13 @@ export const AppHeaderWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  .app-header__title {
+    display: flex;
+    align-items: center;
+
+    .backIcon {
+      margin-right: 10px;
+    }
+  }
 `;

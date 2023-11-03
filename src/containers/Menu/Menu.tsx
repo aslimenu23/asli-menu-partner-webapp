@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { AddMenuButton, AddMenuWrapper } from "./Menu.styles";
+import { AddMenuButton, AddMenuWrapper, SaveMenuCta } from "./Menu.styles";
 import MenuForm from "./MenuForm/MenuForm";
 import MenuList from "./MenuList/MenuList";
 import { AiFillPlusSquare } from "react-icons/ai";
@@ -67,9 +67,16 @@ const Menu = () => {
       ) : (
         <AddMenuButton>
           <AiFillPlusSquare size={50} onClick={toggleForm} />
+          ADD ITEM TO MENU
         </AddMenuButton>
       )}
-      {menu.length ? <Button onClick={saveMenu}>Save Menu</Button> : <></>}
+      {menu.length ? (
+        <SaveMenuCta>
+          <Button onClick={saveMenu}>Save Menu</Button>
+        </SaveMenuCta>
+      ) : (
+        <></>
+      )}
     </AddMenuWrapper>
   );
 };

@@ -21,7 +21,7 @@ import ImageInput from "../../components/ImageInput/ImageInput";
 import { useLocation, useNavigate } from "react-router-dom";
 import TimePicker from "../../components/TimePicker/TimePicker";
 import { SetTiming, Timing } from "./AddRestaurant.types";
-import { saveRestaurantDetails } from "../../actions/actions";
+import { addRestaurant, saveRestaurantDetails } from "../../actions/actions";
 import { useUserStates } from "../../store/userStore";
 import moment from "moment";
 
@@ -31,11 +31,8 @@ const AddRestaurant = () => {
 
   const loggedInUser = useUserStates().loggedInUser;
 
-  const editedRestaurant = location.state?.restaurant?.editValue;
-
-  if (!editedRestaurant) {
-    navigate(ROUTES.RESTAURANTS, { replace: true });
-  }
+  const editedRestaurant = location.state?.restaurant?.editValue || {};
+  const editedRestaurantId = location.state?.restaurant?.id || "";
 
   // Basic details
   const [phoneNumbers, setPhoneNumbers] = useState<any[]>(
@@ -56,16 +53,18 @@ const AddRestaurant = () => {
 
   // Timings
   const [restaurantTimings, setRestaurantTimings] = useState<Timing[]>(
-    editedRestaurant.dineInDetails?.timings || [{ startTime: "", endTime: "" }]
+    editedRestaurant.dineInDetails?.timings || [
+      { startTime: moment(), endTime: moment() },
+    ]
   );
   const [takeawayTimings, setTakeawayTimings] = useState<Timing[]>(
     editedRestaurant.takeawayDetails?.timings || [
-      { startTime: "", endTime: "" },
+      { startTime: moment(), endTime: moment() },
     ]
   );
   const [deliveryTimings, setDeliveryTimings] = useState<Timing[]>(
     editedRestaurant.deliveryDetails?.timings || [
-      { startTime: "", endTime: "" },
+      { startTime: moment(), endTime: moment() },
     ]
   );
 
@@ -118,15 +117,22 @@ const AddRestaurant = () => {
      * Add restaurant -> Add menu
      */
 
-    const response = await saveRestaurantDetails(payload);
+    let response = null;
+    if (editedRestaurant) {
+      response = await saveRestaurantDetails(payload, editedRestaurantId);
+    } else {
+      response = await addRestaurant(payload);
+    }
 
-    // Edit flow
-    // if (editedRestaurant) {
-    //   navigate(ROUTES.RESTAURANTS, { replace: true });
-    // } else {
-    //   // Add flow
-    //   navigate(ROUTES.MENU, { replace: true });
-    // }
+    if (!response) throw new Error("Something went wrong");
+
+    if (editedRestaurant) {
+      // Edit flow
+      navigate(ROUTES.RESTAURANTS, { replace: true });
+    } else {
+      // Add flow
+      navigate(ROUTES.MENU, { replace: true });
+    }
   };
 
   const renderPhoneNumbers = () => {
@@ -225,7 +231,13 @@ const AddRestaurant = () => {
     title: string;
   }) => {
     const addTime = () => {
-      updateStateFunction([...stateKey, { startTime: "", endTime: "" }]);
+      updateStateFunction([
+        ...stateKey,
+        {
+          startTime: moment(),
+          endTime: moment(),
+        },
+      ]);
     };
 
     const removeTime = (index: number) => {
@@ -249,13 +261,13 @@ const AddRestaurant = () => {
             <TimePicker
               label="Start Time"
               name={`${nameKey}_from_${index + 1}`}
-              value={moment(stateKey[index].startTime)}
+              value={moment(stateKey[index].startTime, "HH:mm")}
               onChange={(value) => onTimeChange(value, index, "startTime")}
             />
             <TimePicker
               label="End Time"
               name={`${nameKey}_to_${index + 1}`}
-              value={moment(stateKey[index].endTime)}
+              value={moment(stateKey[index].endTime, "HH:mm")}
               onChange={(value) => onTimeChange(value, index, "endTime")}
             />
             <AddDeleteIcon

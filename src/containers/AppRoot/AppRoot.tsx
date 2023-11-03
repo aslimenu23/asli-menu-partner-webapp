@@ -2,7 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import AppHeader from "../../components/AppHeader/AppHeader";
 import { useUserActions, useUserStates } from "../../store/userStore";
-import firebase, { getAuth, onAuthStateChanged } from "../../services/firebase";
+import firebase, {
+  getAuth,
+  onAuthStateChanged,
+  signOut,
+} from "../../services/firebase";
 import Loader from "../../components/Loader/Loader";
 import { AppRootContentWrapper, AppRootWrapper } from "./AppRoot.styles";
 import { removeItemInLocalStorageWithAsliMenuPrefix } from "../../common/utils";
@@ -23,11 +27,20 @@ const AppRoot = () => {
       // If user is logged in and lands on login page, redirect to home page
       if (user) {
         const userDetails = await getUser(user.uid);
-        setLoggedInUser(userDetails);
+        console.log("12345", {
+          user,
+          userDetails,
+        });
+        if (userDetails?.error?.status === 404) {
+          await signOut(auth);
+          navigate(ROUTES.LOGIN, { replace: true });
+        } else {
+          setLoggedInUser(userDetails?.data);
+        }
       } else {
         // If user is not logged in and lands on any page, redirect to login page
-        if (location.pathname !== "/login") {
-          navigate(`/login?redirect=${location.pathname}`, {
+        if (location.pathname !== ROUTES.LOGIN) {
+          navigate(`${ROUTES.LOGIN}?redirect=${location.pathname}`, {
             replace: true,
           });
         }

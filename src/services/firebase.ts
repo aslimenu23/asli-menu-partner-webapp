@@ -18,4 +18,5 @@ export {
   signInWithPhoneNumber,
   RecaptchaVerifier,
   onAuthStateChanged,
+  signOut,
 } from "firebase/auth";

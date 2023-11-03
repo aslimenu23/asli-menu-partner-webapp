@@ -56,12 +56,10 @@ const MenuList = ({
   const renderItemFooter = (index: number) => {
     return (
       <MenuItemFooter>
-        {showEditFormIndex === index ? (
-          <AiOutlineEdit size={20} onClick={() => toggleEditForm(index)} />
-        ) : (
-          <AiTwotoneEdit size={20} onClick={() => toggleEditForm(index)} />
-        )}
-        <AiTwotoneDelete size={20} onClick={() => onDelete(index)} />
+        <div onClick={() => toggleEditForm(index)}>
+          {showEditFormIndex === index ? "CLOSE EDIT" : "EDIT"}
+        </div>
+        <div onClick={() => onDelete(index)}>DELETE</div>
       </MenuItemFooter>
     );
   };

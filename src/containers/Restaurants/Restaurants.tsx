@@ -37,25 +37,23 @@ const Restaurants = () => {
     setRestaurants([...restaurants.filter((r) => r.id !== id)]);
   };
 
+  const renderActionButton = (text: string, onClick: any) => {
+    return <div onClick={onClick}>{text}</div>;
+  };
+
   const renderList = () => {
     const items = restaurants.map((r, index) => {
       return (
         <ListItem key={index}>
-          <div>{r.restaurant.name}</div>
+          <div className="content">{r.editValue.name}</div>
           <div className="footer">
-            <AiTwotoneEdit
-              size={20}
-              onClick={() => {
-                navigate(ROUTES.ADD_RESTAURANT, { state: { restaurant: r } });
-              }}
-            />
-            <AiTwotoneDelete size={20} onClick={() => onDelete(r.id)} />
-            <AiFillBook
-              size={20}
-              onClick={() => {
-                navigate(ROUTES.MENU, { state: { restaurant: r } });
-              }}
-            />
+            {renderActionButton("EDIT", () => {
+              navigate(ROUTES.ADD_RESTAURANT, { state: { restaurant: r } });
+            })}
+            {renderActionButton("DELETE", () => onDelete(r.id))}
+            {renderActionButton("MENU", () => {
+              navigate(ROUTES.MENU, { state: { restaurant: r } });
+            })}
           </div>
         </ListItem>
       );
@@ -77,6 +75,7 @@ const Restaurants = () => {
           {restaurants.length ? renderList() : <></>}
           <AddCta>
             <AiFillPlusSquare size={50} onClick={addRestaurant} />
+            ADD RESTAURANT
           </AddCta>
         </>
       )}
