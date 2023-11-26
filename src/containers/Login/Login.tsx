@@ -13,6 +13,7 @@ import { createUser, verifyUser } from "../../actions/actions";
 import qs from "query-string";
 import { useUserActions } from "../../store/userStore";
 import { ROUTES } from "../../common/constants";
+import { unstable_batchedUpdates } from "react-dom";
 
 const Login = () => {
   const auth = getAuth(firebase);
@@ -23,6 +24,7 @@ const Login = () => {
 
   const [userAuthObject, setUserAuthObject] = useState<any>(null);
   const [readyToRedirect, setReadyToRedirect] = useState(false);
+  const [isButtonLoading, setIsButtonLoading] = useState(false);
 
   const [phone, setPhone] = useState({
     value: "",
@@ -42,33 +44,6 @@ const Login = () => {
   const confirmationResultRef = useRef<any>();
   const getOtpButtonRef = useRef<any>();
 
-  const signIn = async (recaptchaVerifier: any) => {
-    try {
-      const confirmationResult = await signInWithPhoneNumber(
-        auth,
-        `+91${phone.value}`,
-        recaptchaVerifier
-      );
-      confirmationResultRef.current = confirmationResult;
-      setEnableOTP(true);
-    } catch (error) {
-      alert("Pls refresh the page and try again");
-    }
-  };
-
-  const sendOTP = async () => {
-    // Setup recaptcha to be triggered from the signInWithPhoneNumber call internally
-    const recaptchaVerifier = new RecaptchaVerifier(
-      auth,
-      getOtpButtonRef.current,
-      {
-        size: "invisible",
-        callback: () => {},
-      }
-    );
-    await signIn(recaptchaVerifier);
-  };
-
   const redirectUser = useCallback(() => {
     setTimeout(() => {
       if (location.search) {
@@ -84,8 +59,40 @@ const Login = () => {
     });
   }, [location.search, navigate]);
 
+  const signIn = async (recaptchaVerifier: any) => {
+    try {
+      const confirmationResult = await signInWithPhoneNumber(
+        auth,
+        `+91${phone.value}`,
+        recaptchaVerifier
+      );
+      confirmationResultRef.current = confirmationResult;
+      unstable_batchedUpdates(() => {
+        setEnableOTP(true);
+        setIsButtonLoading(false);
+      });
+    } catch (error) {
+      alert("Pls refresh the page and try again");
+    }
+  };
+
+  const sendOTP = async () => {
+    setIsButtonLoading(true);
+    // Setup recaptcha to be triggered from the signInWithPhoneNumber call internally
+    const recaptchaVerifier = new RecaptchaVerifier(
+      auth,
+      getOtpButtonRef.current,
+      {
+        size: "invisible",
+        callback: () => {},
+      }
+    );
+    await signIn(recaptchaVerifier);
+  };
+
   const onSubmitOtp = async () => {
     try {
+      setIsButtonLoading(true);
       const result = await confirmationResultRef.current.confirm(otp.value);
 
       setUserAuthObject({
@@ -96,34 +103,43 @@ const Login = () => {
       const userResponse = await verifyUser({
         phoneNumber: result.user.phoneNumber,
       });
-      if (userResponse?.isNewUser) {
-        setNewUser(true);
-      } else {
-        setLoggedInUser(userResponse);
-        setReadyToRedirect(true);
-      }
+
+      unstable_batchedUpdates(() => {
+        if (userResponse?.isNewUser) {
+          setNewUser(true);
+        } else {
+          setLoggedInUser(userResponse);
+          setReadyToRedirect(true);
+        }
+      });
+      setIsButtonLoading(false);
     } catch (error) {
       alert("Try again");
     }
   };
 
   const signUpUser = async () => {
+    setIsButtonLoading(true);
     // BE API to add user and navigate to next page
     const response = await createUser({
       name: name.value,
       ...userAuthObject,
     });
-    setLoggedInUser(response);
-    setReadyToRedirect(true);
+
+    unstable_batchedUpdates(() => {
+      setLoggedInUser(response);
+      setReadyToRedirect(true);
+      setIsButtonLoading(false);
+    });
   };
 
   useEffect(() => {
     if (readyToRedirect) redirectUser();
   }, [readyToRedirect, redirectUser]);
 
-  return (
-    <LoginWrapper>
-      <LoginContent>
+  const renderBasicFlow = () => {
+    return (
+      <>
         <TextInput
           label="Phone number"
           name="phone"
@@ -131,52 +147,79 @@ const Login = () => {
           inputType={InputTypes.MOBILE}
           onChange={(value, isValid) => setPhone({ value, isValid: !!isValid })}
         />
+        {!(enableOTP || newUser) ? (
+          <Button
+            ref={getOtpButtonRef}
+            isDisabled={!phone.isValid}
+            onClick={sendOTP}
+            isLoading={isButtonLoading}
+          >
+            Send OTP
+          </Button>
+        ) : (
+          <></>
+        )}
+      </>
+    );
+  };
+
+  const renderOTPFlow = () => {
+    /* Below UI is enabled when the OTP is sent */
+    return enableOTP ? (
+      <>
+        <TextInput
+          label="Enter OTP"
+          name="otp"
+          defaultValue={otp.value}
+          inputType={InputTypes.OTP}
+          onChange={(value, isValid) => setOtp({ value, isValid: !!isValid })}
+        />
+        {!newUser ? (
+          <Button
+            onClick={onSubmitOtp}
+            isDisabled={!(phone.isValid && otp.isValid)}
+            isLoading={isButtonLoading}
+          >
+            Submit
+          </Button>
+        ) : (
+          <></>
+        )}
+      </>
+    ) : (
+      <></>
+    );
+  };
+
+  const renderNewUserFlow = () => {
+    /* The below UI will be enabled for Sign Up flow */
+    return newUser ? (
+      <>
+        <TextInput
+          label="Enter your name"
+          name="userName"
+          defaultValue={name.value}
+          onChange={(value, isValid) => setName({ value, isValid: !!isValid })}
+        />
         <Button
-          ref={getOtpButtonRef}
-          isDisabled={!phone.isValid}
-          onClick={sendOTP}
+          onClick={signUpUser}
+          isDisabled={!(phone.isValid && otp.isValid && name.isValid)}
+          isLoading={isButtonLoading}
         >
-          Send OTP
+          Submit
         </Button>
-        {/* Below UI is enabled when the OTP is sent */}
-        {enableOTP && (
-          <>
-            <TextInput
-              label="Enter OTP"
-              name="otp"
-              defaultValue={otp.value}
-              inputType={InputTypes.OTP}
-              onChange={(value, isValid) =>
-                setOtp({ value, isValid: !!isValid })
-              }
-            />
-            <Button
-              onClick={onSubmitOtp}
-              isDisabled={!(phone.isValid && otp.isValid)}
-            >
-              Submit
-            </Button>
-          </>
-        )}
-        {/* The below UI will be enabled for Sign Up flow */}
-        {newUser && (
-          <>
-            <TextInput
-              label="Enter your name"
-              name="userName"
-              defaultValue={name.value}
-              onChange={(value, isValid) =>
-                setName({ value, isValid: !!isValid })
-              }
-            />
-            <Button
-              onClick={signUpUser}
-              isDisabled={!(phone.isValid && otp.isValid && name.isValid)}
-            >
-              Submit
-            </Button>
-          </>
-        )}
+      </>
+    ) : (
+      <></>
+    );
+  };
+
+  return (
+    <LoginWrapper>
+      <LoginContent>
+        {renderBasicFlow()}
+        {renderOTPFlow()}
+        {renderNewUserFlow()}
       </LoginContent>
     </LoginWrapper>
   );

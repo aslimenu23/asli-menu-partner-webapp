@@ -12,6 +12,7 @@ import { AppRootContentWrapper, AppRootWrapper } from "./AppRoot.styles";
 import { removeItemInLocalStorageWithAsliMenuPrefix } from "../../common/utils";
 import { getUser } from "../../actions/actions";
 import { ROUTES } from "../../common/constants";
+import Snackbar from "../Snackbar/Snackbar";
 
 const AppRoot = () => {
   const navigate = useNavigate();
@@ -27,10 +28,6 @@ const AppRoot = () => {
       // If user is logged in and lands on login page, redirect to home page
       if (user) {
         const userDetails = await getUser(user.uid);
-        console.log("12345", {
-          user,
-          userDetails,
-        });
         if (userDetails?.error?.status === 404) {
           await signOut(auth);
           navigate(ROUTES.LOGIN, { replace: true });
@@ -65,7 +62,14 @@ const AppRoot = () => {
     <AppRootWrapper>
       <AppHeader loggedInUser={loggedInUser} />
       <AppRootContentWrapper>
-        {loading ? <Loader isFullScreen /> : <Outlet />}
+        {loading ? (
+          <Loader isFullScreen />
+        ) : (
+          <>
+            <Outlet />
+            <Snackbar />
+          </>
+        )}
       </AppRootContentWrapper>
     </AppRootWrapper>
   );

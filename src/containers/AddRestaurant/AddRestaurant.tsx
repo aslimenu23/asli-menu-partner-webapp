@@ -24,6 +24,7 @@ import { SetTiming, Timing } from "./AddRestaurant.types";
 import { addRestaurant, saveRestaurantDetails } from "../../actions/actions";
 import { useUserStates } from "../../store/userStore";
 import moment from "moment";
+import Section from "../../components/Section/Section";
 
 const AddRestaurant = () => {
   const navigate = useNavigate();
@@ -154,13 +155,13 @@ const AddRestaurant = () => {
 
     const currentPhoneNumbers = phoneNumbers.map((phoneNumber, index) => {
       return (
-        <PhoneNumbersWrapper key={index}>
+        <PhoneNumbersWrapper key={`${index}_${phoneNumber}`}>
           <TextInput
             noMargin
             isRequired={index < MAX_RESTAURANT_PHONE_COUNT / 2}
-            label={`Phone number ${index + 1}`}
+            label={`Phone Number ${index + 1}`}
             name={`phone_${index + 1}`}
-            defaultValue={phoneNumber[index]}
+            defaultValue={phoneNumber}
             inputType={InputTypes.MOBILE}
             onChange={(value) => onPhoneNumberChange(value, index)}
           />
@@ -253,7 +254,7 @@ const AddRestaurant = () => {
       });
     };
 
-    const currentTimings = images.map((time: any, index: number) => {
+    const currentTimings = stateKey.map((time: any, index: number) => {
       return (
         <TimingsWrapper key={index}>
           <label>{title}</label>
@@ -288,6 +289,7 @@ const AddRestaurant = () => {
   return (
     <AddRestaurantWrapper>
       <form onSubmit={onSubmit}>
+        <Section text="Basic Restaurant Details" removeMarginTop />
         <TextInput
           isRequired
           label="Restaurant Name"
@@ -321,42 +323,78 @@ const AddRestaurant = () => {
           defaultValue={editedRestaurant.location?.areaName}
         />
         <TextInput
-          label="Free delivery distance"
-          name="freeDeliveryDistance"
-          placeholder="Distance in kms"
-          inputType={InputTypes.NUMBER}
-          defaultValue={editedRestaurant.deliveryDetails?.freeDeliveryDistance}
-        />
-        <TextInput
-          label="Avg. Price"
+          label="Average Price"
           name="avgPrice"
           inputType={InputTypes.NUMBER}
           defaultValue={editedRestaurant.avgPrice}
         />
-        {renderPhoneNumbers()}
         {/* {renderPhotoUploadInputs()} */}
-        {renderTimings({
-          stateKey: restaurantTimings,
-          updateStateFunction: setRestaurantTimings,
-          nameKey: "restaurantTimings",
-          title: "Restaurant Timings",
-        })}
 
+        <Section text="Manager/Owner Details" />
+        {renderPhoneNumbers()}
         <Checkbox
           label="Is managed by owner?"
           name="isManagedByOwner"
           defaultValue={editedRestaurant.isManagedByOwner}
         />
 
+        <Section text="Timings and Facilities" />
+        {/* Dine In */}
         <Checkbox
-          label="Dine in"
+          label="Dine In"
           name="dineIn"
           value={dineIn.toString()}
           onChange={(value) => setDineIn(value)}
         />
+        {dineIn ? (
+          renderTimings({
+            stateKey: restaurantTimings,
+            updateStateFunction: setRestaurantTimings,
+            nameKey: "restaurantTimings",
+            title: "Restaurant Timings",
+          })
+        ) : (
+          <></>
+        )}
 
+        {/* Delivery */}
         <Checkbox
-          label="Takeaway"
+          label="Delivery"
+          name="delivery"
+          value={delivery.toString()}
+          onChange={(value) => setDelivery(value)}
+        />
+        {delivery ? (
+          <>
+            {renderTimings({
+              stateKey: deliveryTimings,
+              updateStateFunction: setDeliveryTimings,
+              nameKey: "deliveryTimings",
+              title: "Delivery Timings",
+            })}
+            <TextInput
+              label="Free Delivery Distance"
+              name="freeDeliveryDistance"
+              placeholder="Distance in kms"
+              inputType={InputTypes.NUMBER}
+              defaultValue={
+                editedRestaurant.deliveryDetails?.freeDeliveryDistance
+              }
+            />
+            <TextInput
+              label="Delivery Fee Post Free Distance"
+              name="deliveryFee"
+              inputType={InputTypes.NUMBER}
+              defaultValue={editedRestaurant.deliveryFee || 0}
+            />
+          </>
+        ) : (
+          <></>
+        )}
+
+        {/* Take Away */}
+        <Checkbox
+          label="Takeway"
           name="takeaway"
           value={takeaway.toString()}
           onChange={(value) => setTakeaway(value)}
@@ -367,23 +405,6 @@ const AddRestaurant = () => {
             updateStateFunction: setTakeawayTimings,
             nameKey: "takeawayTimings",
             title: "Takeaway Timings",
-          })
-        ) : (
-          <></>
-        )}
-
-        <Checkbox
-          label="Delivery"
-          name="delivery"
-          value={delivery.toString()}
-          onChange={(value) => setDelivery(value)}
-        />
-        {delivery ? (
-          renderTimings({
-            stateKey: deliveryTimings,
-            updateStateFunction: setDeliveryTimings,
-            nameKey: "deliveryTimings",
-            title: "Delivery Timings",
           })
         ) : (
           <></>

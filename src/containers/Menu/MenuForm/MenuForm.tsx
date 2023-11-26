@@ -9,9 +9,11 @@ import { FormFooter, MenuFormWrapper } from "./MenuForm.styles";
 const MenuForm = ({
   item,
   onChange,
+  onCancel,
 }: {
   item?: any;
   onChange: (item: any) => void;
+  onCancel: () => void;
 }) => {
   const onSubmit = (event: any) => {
     event.preventDefault();
@@ -37,6 +39,11 @@ const MenuForm = ({
           defaultValue={item?.name}
         />
         <TextInput
+          name="description"
+          label="Item Description"
+          defaultValue={item?.description}
+        />
+        <TextInput
           isRequired
           name="price"
           label="Price"
@@ -55,7 +62,9 @@ const MenuForm = ({
           defaultValue={item?.isBestSeller}
         />
         <FormFooter>
-          <Button type="button">Cancel</Button>
+          <Button onClick={onCancel} type="button">
+            Cancel
+          </Button>
           <Button type="submit">Submit</Button>
         </FormFooter>
       </form>

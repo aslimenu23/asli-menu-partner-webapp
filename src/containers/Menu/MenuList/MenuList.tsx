@@ -7,8 +7,9 @@ import {
   MenuItemFooter,
 } from "./MenuList.styles";
 import { FaIndianRupeeSign } from "react-icons/fa6";
-import { AiTwotoneEdit, AiTwotoneDelete, AiOutlineEdit } from "react-icons/ai";
 import MenuForm from "../MenuForm/MenuForm";
+import { useCommonActions } from "../../../store/commonStore";
+import { FaStar } from "react-icons/fa";
 
 const MenuList = ({
   menu,
@@ -18,15 +19,18 @@ const MenuList = ({
   onChange: (menu: any[]) => void;
 }) => {
   const [showEditFormIndex, setShowEditFormIndex] = useState(-1);
+  const { setSnackbarMessage } = useCommonActions();
 
   const onEdit = (updatedItem: any, index: number) => {
     menu[index] = updatedItem;
     onChange([...menu]);
+    setSnackbarMessage("Item updated successfully!");
   };
 
   const onDelete = (index: number) => {
     menu.splice(index, 1);
     onChange([...menu]);
+    setSnackbarMessage("Item deleted successfully!");
   };
 
   const toggleEditForm = (index: number) => {
@@ -46,6 +50,7 @@ const MenuList = ({
           <ListItem>{item.category}</ListItem>
         </div>
         <ListItem>{item.dishType}</ListItem>
+        <ListItem>{item.isBestSeller ? <FaStar /> : <></>}</ListItem>
         <ListItem isLarge className="price">
           <FaIndianRupeeSign size={20} /> {item.price}
         </ListItem>
@@ -75,6 +80,7 @@ const MenuList = ({
           {showEditFormIndex === index ? (
             <MenuForm
               item={item}
+              onCancel={() => setShowEditFormIndex(-1)}
               onChange={(newItem: any) => onEdit(newItem, index)}
             />
           ) : (

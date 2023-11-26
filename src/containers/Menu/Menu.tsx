@@ -9,11 +9,13 @@ import Button from "../../components/Button/Button";
 import { saveMenuDetails } from "../../actions/actions";
 import { useUserStates } from "../../store/userStore";
 import { ROUTES } from "../../common/constants";
+import { useCommonActions } from "../../store/commonStore";
 
 const Menu = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const loggedInUser = useUserStates().loggedInUser;
+  const { setSnackbarMessage } = useCommonActions();
 
   const [menu, setMenu] = useState<any[]>([]);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -50,7 +52,10 @@ const Menu = () => {
       menu,
     };
     const response = await saveMenuDetails(payload);
-    if (response) goToRestaurantsPage();
+    if (response) {
+      setSnackbarMessage("Menu saved successfully!");
+      goToRestaurantsPage();
+    }
   };
 
   // Go to home page if no restaurant is selected
@@ -63,7 +68,7 @@ const Menu = () => {
     <AddMenuWrapper>
       <MenuList menu={menu} onChange={onChange} />
       {showAddForm ? (
-        <MenuForm onChange={onAddItem} />
+        <MenuForm onCancel={toggleForm} onChange={onAddItem} />
       ) : (
         <AddMenuButton>
           <AiFillPlusSquare size={50} onClick={toggleForm} />

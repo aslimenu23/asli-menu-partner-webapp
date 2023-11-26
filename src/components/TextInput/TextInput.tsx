@@ -30,7 +30,12 @@ const TextInput = ({
 
   return (
     <StyledInputWrapper noMargin={noMargin}>
-      {label && <label htmlFor={name}>{label}</label>}
+      {label && (
+        <label htmlFor={name}>
+          {label}
+          {isRequired ? "*" : ""}
+        </label>
+      )}
       <StyledInput
         required={isRequired}
         name={name}

@@ -18,20 +18,20 @@ export const LoadingWrapper = styled.div<{ isFullScreen?: boolean }>`
   `})}
 `;
 
-export const StyledLoader = styled.div<{ isFullScreen?: boolean }>`
+export const StyledLoader = styled.div<{ isSmall?: boolean }>`
   display: inline-block;
   position: relative;
-  width: 80px;
-  height: 80px;
+  width: ${({ isSmall }) => (isSmall ? "30px" : "80px")};
+  height: ${({ isSmall }) => (isSmall ? "30px" : "80px")};
 
   div {
     box-sizing: border-box;
     display: block;
     position: absolute;
-    width: 64px;
-    height: 64px;
+    width: ${({ isSmall }) => (isSmall ? "20px" : "64px")};
+    height: ${({ isSmall }) => (isSmall ? "20px" : "64px")};
     margin: 8px;
-    border: 8px solid #000;
+    border: ${({ isSmall }) => (isSmall ? "4px" : "8px")} solid #000;
     border-radius: 50%;
     animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
     border-color: #000 transparent transparent transparent;

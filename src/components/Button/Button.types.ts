@@ -4,4 +4,5 @@ export type ButtonProps = {
   className?: string;
   isDisabled?: boolean;
   type?: "button" | "submit" | "reset";
+  isLoading?: boolean;
 };

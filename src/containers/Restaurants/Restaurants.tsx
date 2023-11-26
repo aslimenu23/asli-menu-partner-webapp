@@ -7,12 +7,7 @@ import {
 } from "./Restaurants.styles";
 import Loader from "../../components/Loader/Loader";
 import { useNavigate } from "react-router-dom";
-import {
-  AiFillPlusSquare,
-  AiTwotoneDelete,
-  AiTwotoneEdit,
-  AiFillBook,
-} from "react-icons/ai";
+import { AiFillPlusSquare } from "react-icons/ai";
 import { ROUTES } from "../../common/constants";
 import { getAllRestaurants } from "../../actions/actions";
 import { useUserStates } from "../../store/userStore";
@@ -34,6 +29,7 @@ const Restaurants = () => {
   }, [loggedInUser]);
 
   const onDelete = (id: string) => {
+    // TODO: Integrate API call to delete restaurant
     setRestaurants([...restaurants.filter((r) => r.id !== id)]);
   };
 
