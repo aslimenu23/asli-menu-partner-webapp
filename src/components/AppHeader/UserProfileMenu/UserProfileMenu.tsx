@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   UserProfileDetailsPopup,
   UserProfileMenuWrapper,
@@ -6,13 +6,28 @@ import {
 import { RxAvatar } from "react-icons/rx";
 import Button from "../../Button/Button";
 import firebase, { getAuth, signOut } from "../../../services/firebase";
-import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../../../common/constants";
 
 const UserProfileMenu = ({ loggedInUser }: { loggedInUser: any }) => {
-  const navigate = useNavigate();
+  const popupRef = useRef<HTMLDivElement>(null);
 
   const [popup, setPopup] = useState(false);
+
+  useEffect(() => {
+    const handleOutsideClick = (event: any) => {
+      if (popupRef.current && !popupRef.current.contains(event.target)) {
+        setPopup(false);
+      }
+    };
+
+    if (popup) {
+      document.addEventListener("click", handleOutsideClick);
+    }
+
+    return () => {
+      document.removeEventListener("click", handleOutsideClick);
+    };
+  }, [popup]);
 
   const togglePopup = () => setPopup((prevPopup) => !prevPopup);
 
@@ -25,6 +40,7 @@ const UserProfileMenu = ({ loggedInUser }: { loggedInUser: any }) => {
         <Button
           onClick={async () => {
             try {
+              togglePopup();
               const auth = getAuth(firebase);
               await signOut(auth);
               window.location.replace(
@@ -43,7 +59,7 @@ const UserProfileMenu = ({ loggedInUser }: { loggedInUser: any }) => {
 
   if (!loggedInUser) return <></>;
   return (
-    <UserProfileMenuWrapper>
+    <UserProfileMenuWrapper ref={popupRef}>
       <RxAvatar size={30} onClick={togglePopup} />
       {renderUserDetailsPopup()}
     </UserProfileMenuWrapper>
