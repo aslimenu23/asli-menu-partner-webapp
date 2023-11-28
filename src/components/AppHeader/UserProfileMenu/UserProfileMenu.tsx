@@ -24,9 +24,15 @@ const UserProfileMenu = ({ loggedInUser }: { loggedInUser: any }) => {
         <div>{loggedInUser.phoneNumber}</div>
         <Button
           onClick={async () => {
-            const auth = getAuth(firebase);
-            await signOut(auth);
-            navigate(ROUTES.LOGIN, { replace: true });
+            try {
+              const auth = getAuth(firebase);
+              await signOut(auth);
+              window.location.replace(
+                `${window.location.origin}${ROUTES.LOGIN}`
+              );
+            } catch (err) {
+              console.log("Error Signing Out!", err);
+            }
           }}
         >
           LOG OUT
