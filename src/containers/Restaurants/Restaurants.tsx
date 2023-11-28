@@ -9,7 +9,7 @@ import Loader from "../../components/Loader/Loader";
 import { useNavigate } from "react-router-dom";
 import { AiFillPlusSquare } from "react-icons/ai";
 import { ROUTES } from "../../common/constants";
-import { getAllRestaurants } from "../../actions/actions";
+import { deleteRestaurant, getAllRestaurants } from "../../actions/actions";
 import { useUserStates } from "../../store/userStore";
 
 const Restaurants = () => {
@@ -28,9 +28,16 @@ const Restaurants = () => {
     })();
   }, [loggedInUser]);
 
-  const onDelete = (id: string) => {
-    // TODO: Integrate API call to delete restaurant
-    setRestaurants([...restaurants.filter((r) => r.id !== id)]);
+  const onDelete = async (id: string) => {
+    await deleteRestaurant(
+      {
+        user: loggedInUser,
+      },
+      id
+    );
+    const allRestaurants = await getAllRestaurants(loggedInUser);
+    setRestaurants(allRestaurants);
+    setLoading(false);
   };
 
   const renderActionButton = (text: string, onClick: any) => {
@@ -68,7 +75,7 @@ const Restaurants = () => {
         <Loader isFullScreen />
       ) : (
         <>
-          {restaurants.length ? renderList() : <></>}
+          {restaurants?.length ? renderList() : <></>}
           <AddCta>
             <AiFillPlusSquare size={50} onClick={addRestaurant} />
             ADD RESTAURANT

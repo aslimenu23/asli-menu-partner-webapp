@@ -71,6 +71,22 @@ export const addRestaurant = async (payload: any) => {
   } catch (err) {}
 };
 
+export const deleteRestaurant = async (payload: any, resId: string) => {
+  try {
+    const customHeaders = {
+      user: payload.user.id,
+    };
+
+    const data = await axios.delete(
+      `${API_ENDPOINTS.restaurant}${resId}`,
+      {
+        headers: customHeaders,
+      }
+    );
+    return data.data;
+  } catch (err) {}
+};
+
 export const saveRestaurantDetails = async (payload: any, resId: string) => {
   try {
     const customHeaders = {
