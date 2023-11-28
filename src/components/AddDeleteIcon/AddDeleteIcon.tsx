@@ -17,7 +17,12 @@ const AddDeleteIcon = ({
   if (index === list.length - 1 && list.length === listMaxOut) return <></>;
 
   if (index === list.length - 1) {
-    return <AiFillPlusCircle size={24} onClick={addCb} />;
+    return (
+      <>
+        {index > 0  && <AiFillMinusCircle size={24} onClick={() => deleteCb(index)} />}
+        <AiFillPlusCircle size={24} onClick={addCb} />
+      </>
+    );
   }
 
   return <AiFillMinusCircle size={24} onClick={() => deleteCb(index)} />;

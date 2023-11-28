@@ -37,9 +37,13 @@ const AddRestaurant = () => {
 
   // Basic details
   const [phoneNumbers, setPhoneNumbers] = useState<any[]>(
-    editedRestaurant.phoneNumbers || [""]
+    editedRestaurant.phoneNumbers && editedRestaurant.phoneNumbers.length > 0
+      ? editedRestaurant.phoneNumbers
+      : [""]
   );
-  const [images, setImages] = useState(editedRestaurant.images || [{}]);
+  const [images, setImages] = useState(
+    editedRestaurant.images && editedRestaurant.images.length > 0 ? editedRestaurant.images : [{}]
+  );
 
   // boolean
   const [dineIn, setDineIn] = useState(
@@ -54,17 +58,18 @@ const AddRestaurant = () => {
 
   // Timings
   const [restaurantTimings, setRestaurantTimings] = useState<Timing[]>(
-    editedRestaurant.dineInDetails?.timings || [
+    editedRestaurant.dineInDetails?.timings &&
+      editedRestaurant.dineInDetails?.timings.length > 0 ? editedRestaurant.dineInDetails?.timings : [
       { startTime: moment(), endTime: moment() },
     ]
   );
   const [takeawayTimings, setTakeawayTimings] = useState<Timing[]>(
-    editedRestaurant.takeawayDetails?.timings || [
+    editedRestaurant.takeawayDetails?.timings && editedRestaurant.takeawayDetails?.timings.length > 0 ? editedRestaurant.takeawayDetails?.timings : [
       { startTime: moment(), endTime: moment() },
     ]
   );
   const [deliveryTimings, setDeliveryTimings] = useState<Timing[]>(
-    editedRestaurant.deliveryDetails?.timings || [
+    editedRestaurant.deliveryDetails?.timings && editedRestaurant.deliveryDetails?.timings.length > 0 ? editedRestaurant.deliveryDetails?.timings : [
       { startTime: moment(), endTime: moment() },
     ]
   );
