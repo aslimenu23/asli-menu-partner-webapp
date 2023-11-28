@@ -14,6 +14,7 @@ import qs from "query-string";
 import { useUserActions } from "../../store/userStore";
 import { ROUTES } from "../../common/constants";
 import { unstable_batchedUpdates } from "react-dom";
+import { useCommonActions } from "../../store/commonStore";
 
 const Login = () => {
   const auth = getAuth(firebase);
@@ -21,6 +22,7 @@ const Login = () => {
   const location = useLocation();
 
   const setLoggedInUser = useUserActions().setLoggedInUser;
+  const { setSnackbarMessage } = useCommonActions();
 
   const [userAuthObject, setUserAuthObject] = useState<any>(null);
   const [readyToRedirect, setReadyToRedirect] = useState(false);
@@ -72,22 +74,28 @@ const Login = () => {
         setIsButtonLoading(false);
       });
     } catch (error) {
-      alert("Pls refresh the page and try again");
+      setIsButtonLoading(false);
+      setSnackbarMessage("Pls refresh the page and try again");
     }
   };
 
   const sendOTP = async () => {
-    setIsButtonLoading(true);
-    // Setup recaptcha to be triggered from the signInWithPhoneNumber call internally
-    const recaptchaVerifier = new RecaptchaVerifier(
-      auth,
-      getOtpButtonRef.current,
-      {
-        size: "invisible",
-        callback: () => {},
-      }
-    );
-    await signIn(recaptchaVerifier);
+    try {
+      setIsButtonLoading(true);
+      // Setup recaptcha to be triggered from the signInWithPhoneNumber call internally
+      const recaptchaVerifier = new RecaptchaVerifier(
+        auth,
+        getOtpButtonRef.current,
+        {
+          size: "invisible",
+          callback: () => {},
+        }
+      );
+      await signIn(recaptchaVerifier);
+    } catch (error) {
+      setIsButtonLoading(false);
+      setSnackbarMessage("Pls refresh the page and try again");
+    }
   };
 
   const onSubmitOtp = async () => {
@@ -114,23 +122,29 @@ const Login = () => {
       });
       setIsButtonLoading(false);
     } catch (error) {
-      alert("Try again");
+      setIsButtonLoading(false);
+      setSnackbarMessage("Invalid OTP!");
     }
   };
 
   const signUpUser = async () => {
-    setIsButtonLoading(true);
-    // BE API to add user and navigate to next page
-    const response = await createUser({
-      name: name.value,
-      ...userAuthObject,
-    });
+    try {
+      setIsButtonLoading(true);
+      // BE API to add user and navigate to next page
+      const response = await createUser({
+        name: name.value,
+        ...userAuthObject,
+      });
 
-    unstable_batchedUpdates(() => {
-      setLoggedInUser(response);
-      setReadyToRedirect(true);
+      unstable_batchedUpdates(() => {
+        setLoggedInUser(response);
+        setReadyToRedirect(true);
+        setIsButtonLoading(false);
+      });
+    } catch (error) {
       setIsButtonLoading(false);
-    });
+      setSnackbarMessage("Pls refresh the page and try again");
+    }
   };
 
   useEffect(() => {
