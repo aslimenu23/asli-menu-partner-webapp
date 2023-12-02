@@ -7,3 +7,5 @@ export const AREA_TYPES_LIST = [
     value: AREA_TYPES.BELLANDUR,
   },
 ];
+
+export const FIELD_NAMES_FOR_CUSTOM_VALIDATION = ["cuisines", "areaName"];

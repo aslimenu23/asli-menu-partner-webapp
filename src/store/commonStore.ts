@@ -3,7 +3,11 @@ import { create } from "zustand";
 type StoreType = {
   state: {
     snackbarMessage: string;
-    resChoices: any;
+    resChoices: null | {
+      cuisines: string[];
+      dishCategories: string[];
+      dishNames: string[];
+    };
   };
   actions: {
     setSnackbarMessage: (snackbarMessage: string) => void;

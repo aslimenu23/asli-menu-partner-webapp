@@ -5,8 +5,10 @@ import {
   TimingsWrapper,
 } from "./AddRestaurant.styles";
 import TextInput from "../../components/TextInput/TextInput";
-import Select from "../../components/Select/Select";
-import { AREA_TYPES_LIST } from "./AddRestaurant.constants";
+import {
+  AREA_TYPES_LIST,
+  FIELD_NAMES_FOR_CUSTOM_VALIDATION,
+} from "./AddRestaurant.constants";
 import Checkbox from "../../components/Checkbox/Checkbox";
 import { InputTypes } from "../../components/TextInput/TextInput.types";
 import Button from "../../components/Button/Button";
@@ -25,15 +27,34 @@ import { addRestaurant, saveRestaurantDetails } from "../../actions/actions";
 import { useUserStates } from "../../store/userStore";
 import moment from "moment";
 import Section from "../../components/Section/Section";
+import { useCommonStates } from "../../store/commonStore";
+import { convertToCapitalCase, getSelectableList } from "../../common/utils";
+import Select from "../../components/Select/Select";
+import { performCustomValidations } from "./AddRestaurant.helpers";
+import Loader from "../../components/Loader/Loader";
 
 const AddRestaurant = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
   const loggedInUser = useUserStates().loggedInUser;
+  const resChoices = useCommonStates().resChoices;
 
   const editedRestaurant = location.state?.restaurant?.editValue || {};
   const editedRestaurantId = location.state?.restaurant?.id || "";
+
+  const [loading, setLoading] = useState(false);
+
+  const [localCuisines, setLocalCuisines] = useState<
+    { label: string; value: string }[]
+  >([...getSelectableList(resChoices?.cuisines || [])]);
+
+  const [cuisines, setCuisines] = useState<string[]>(editedRestaurant.cuisines);
+  const [areaName, setAreaName] = useState<string>(
+    editedRestaurant.location?.areaName
+  );
+
+  const [validationErrors, setValidationErrors] = useState<any>({});
 
   // Basic details
   const [phoneNumbers, setPhoneNumbers] = useState<any[]>(
@@ -42,7 +63,9 @@ const AddRestaurant = () => {
       : [""]
   );
   const [images, setImages] = useState(
-    editedRestaurant.images && editedRestaurant.images.length > 0 ? editedRestaurant.images : [{}]
+    editedRestaurant.images && editedRestaurant.images.length > 0
+      ? editedRestaurant.images
+      : [{}]
   );
 
   // boolean
@@ -59,46 +82,69 @@ const AddRestaurant = () => {
   // Timings
   const [restaurantTimings, setRestaurantTimings] = useState<Timing[]>(
     editedRestaurant.dineInDetails?.timings &&
-      editedRestaurant.dineInDetails?.timings.length > 0 ? editedRestaurant.dineInDetails?.timings : [
-      { startTime: moment(), endTime: moment() },
-    ]
+      editedRestaurant.dineInDetails?.timings.length > 0
+      ? editedRestaurant.dineInDetails?.timings
+      : [{ startTime: moment(), endTime: moment() }]
   );
   const [takeawayTimings, setTakeawayTimings] = useState<Timing[]>(
-    editedRestaurant.takeawayDetails?.timings && editedRestaurant.takeawayDetails?.timings.length > 0 ? editedRestaurant.takeawayDetails?.timings : [
-      { startTime: moment(), endTime: moment() },
-    ]
+    editedRestaurant.takeawayDetails?.timings &&
+      editedRestaurant.takeawayDetails?.timings.length > 0
+      ? editedRestaurant.takeawayDetails?.timings
+      : [{ startTime: moment(), endTime: moment() }]
   );
   const [deliveryTimings, setDeliveryTimings] = useState<Timing[]>(
-    editedRestaurant.deliveryDetails?.timings && editedRestaurant.deliveryDetails?.timings.length > 0 ? editedRestaurant.deliveryDetails?.timings : [
-      { startTime: moment(), endTime: moment() },
-    ]
+    editedRestaurant.deliveryDetails?.timings &&
+      editedRestaurant.deliveryDetails?.timings.length > 0
+      ? editedRestaurant.deliveryDetails?.timings
+      : [{ startTime: moment(), endTime: moment() }]
   );
+
+  const addNewItemToCuisines = (values: any) => {
+    const latestItem = values[values.length - 1];
+    if (latestItem.__isNew__) {
+      setLocalCuisines([
+        ...localCuisines,
+        {
+          label: convertToCapitalCase(latestItem.label),
+          value: latestItem.value.toUpperCase(),
+        },
+      ]);
+    }
+    setCuisines(values.map((item: any) => item.value));
+  };
 
   const onSubmit = async (event: any) => {
     event.preventDefault();
+    setLoading(true);
     const formData = new FormData(event.target);
     const formDataObject = Object.fromEntries(formData.entries());
 
-    const {
-      name,
-      location,
-      fullAddress,
-      cuisine,
-      area,
-      freeDeliveryDistance,
-      avgPrice,
-    } = formDataObject;
+    const validationsPassed = performCustomValidations(
+      formDataObject,
+      FIELD_NAMES_FOR_CUSTOM_VALIDATION
+    );
+
+    if (!validationsPassed.isValid) {
+      setValidationErrors(validationsPassed.errors);
+      setLoading(false);
+      return;
+    }
+
+    console.log("formDataObject", formDataObject);
+
+    const { name, location, fullAddress, freeDeliveryDistance, avgPrice } =
+      formDataObject;
     const payload = {
       user: loggedInUser,
       name,
       images,
       phoneNumbers,
       avgPrice,
-      cuisines: (cuisine as string).split(",").map((cuisine) => cuisine.trim()),
+      cuisines,
       location: {
-        gmapLink: location,
-        areaName: area,
+        areaName,
         fullAddress,
+        gmapLink: location,
       },
       dineInDetails: {
         enabled: dineIn,
@@ -130,7 +176,10 @@ const AddRestaurant = () => {
       response = await addRestaurant(payload);
     }
 
-    if (!response) throw new Error("Something went wrong");
+    if (!response) {
+      setLoading(false);
+      throw new Error("Something went wrong");
+    }
 
     if (editedRestaurant) {
       // Edit flow
@@ -314,18 +363,23 @@ const AddRestaurant = () => {
           name="fullAddress"
           defaultValue={editedRestaurant.location?.fullAddress}
         />
-        <TextInput
-          isRequired
+        <Select
+          isMulti
+          isCreatable
           label="Restaurant Cuisine"
-          name="cuisine"
-          defaultValue={editedRestaurant.cuisines?.join(", ")}
+          name="cuisines"
+          list={localCuisines}
+          value={cuisines}
+          onChange={addNewItemToCuisines}
+          validationError={validationErrors.cuisines}
         />
         <Select
-          isRequired
           label="Restaurant Area"
-          name="area"
+          name="areaName"
           list={AREA_TYPES_LIST}
-          defaultValue={editedRestaurant.location?.areaName}
+          value={areaName}
+          onChange={(value: any) => setAreaName(value.value)}
+          validationError={validationErrors.area}
         />
         <TextInput
           label="Average Price"
@@ -415,7 +469,9 @@ const AddRestaurant = () => {
           <></>
         )}
 
-        <Button type="submit">Submit</Button>
+        <Button type="submit">
+          {loading ? <Loader isSmall /> : <>Submit</>}
+        </Button>
       </form>
     </AddRestaurantWrapper>
   );

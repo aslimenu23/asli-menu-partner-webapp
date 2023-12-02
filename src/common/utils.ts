@@ -22,3 +22,20 @@ export const removeItemInLocalStorageWithAsliMenuPrefix = () => {
     }
   });
 };
+
+export const convertToCapitalCase = (anyString: string) => {
+  const words = anyString.split(" ");
+  const capitalCaseWords = words.map(
+    (word) => word.charAt(0).toUpperCase() + word.slice(1)
+  );
+  const capitalCaseName = capitalCaseWords.join(" ");
+  return capitalCaseName;
+};
+
+export const getSelectableList = (values: string[]) => {
+  if (!values) return [];
+  return values.map((value) => ({
+    label: convertToCapitalCase(value),
+    value: value.toUpperCase(),
+  }));
+};

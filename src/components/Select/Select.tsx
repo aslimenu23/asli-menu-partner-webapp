@@ -1,49 +1,64 @@
 import React, { useState } from "react";
-import { StyledSelect } from "./Select.styles";
+import Select from "react-select";
+import CreatableSelect from "react-select/creatable";
 
-const Select = ({
+const CustomSelect = ({
   label,
   name,
   list,
-  defaultValue,
+  value,
+  validationError,
+  isCreatable,
+  isMulti,
   onChange,
-  isRequired,
 }: {
   name: string;
   list: {
     label: string;
     value: string;
   }[];
-  label?: string;
-  defaultValue?: string;
-  onChange?: (value: string) => void;
+  label: string;
+  value: string | any[];
+  onChange: (value: string | any[]) => void;
   isRequired?: boolean;
+  isCreatable?: boolean;
+  isMulti?: boolean;
+  validationError?: string;
 }) => {
-  const [value, setValue] = useState(defaultValue);
+  const [localState, setLocalState] = useState(value);
 
-  const onSelectChange = (event: any) => {
-    const newValue = event.target.value;
-    setValue(newValue);
-    onChange?.(newValue);
+  const onSelectChange = (selectValues: any | any[]) => {
+    setLocalState(selectValues);
+    onChange(selectValues);
   };
+
+  const SelectComponent = isCreatable ? CreatableSelect : Select;
 
   return (
     <>
       {label && <label htmlFor={name}>{label}</label>}
-      <StyledSelect
-        required={isRequired}
+      <SelectComponent
         name={name}
-        value={value}
+        value={localState}
+        options={list as readonly any[]}
         onChange={onSelectChange}
-      >
-        {list.map(({ value, label }, index) => (
-          <option key={index} value={value}>
-            {label}
-          </option>
-        ))}
-      </StyledSelect>
+        isMulti={isMulti}
+        styles={{
+          control: (baseStyles, state) => ({
+            ...baseStyles,
+            height: "30px",
+          }),
+        }}
+      />
+      {validationError ? (
+        <div style={{ margin: "10px 0", color: "red", fontSize: 12 }}>
+          {validationError}
+        </div>
+      ) : (
+        <></>
+      )}
     </>
   );
 };
 
-export default Select;
+export default CustomSelect;

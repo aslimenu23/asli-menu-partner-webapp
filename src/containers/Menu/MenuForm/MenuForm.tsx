@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import TextInput from "../../../components/TextInput/TextInput";
 import Select from "../../../components/Select/Select";
 import { CATEGORY_LIST, DISH_TYPES_LIST } from "./MenuForm.constants";
@@ -15,6 +15,10 @@ const MenuForm = ({
   onChange: (item: any) => void;
   onCancel: () => void;
 }) => {
+  const [category, setCategory] = useState(item?.category);
+  const [name, setName] = useState(item?.name);
+  const [dishType, setDishType] = useState(item?.dishType);
+
   const onSubmit = (event: any) => {
     event.preventDefault();
     const formData = new FormData(event.target);
@@ -30,13 +34,16 @@ const MenuForm = ({
           list={CATEGORY_LIST}
           name="category"
           label="Category"
-          defaultValue={item?.category}
+          value={category}
+          onChange={(value: any) => setCategory(value)}
         />
-        <TextInput
+        <Select
           isRequired
+          list={CATEGORY_LIST}
           name="name"
           label="Item Name"
-          defaultValue={item?.name}
+          value={name}
+          onChange={(value: any) => setName(value)}
         />
         <TextInput
           name="description"
@@ -54,7 +61,8 @@ const MenuForm = ({
           list={DISH_TYPES_LIST}
           name="dishType"
           label="Type"
-          defaultValue={item?.dishType}
+          value={dishType}
+          onChange={(value: any) => setDishType(value)}
         />
         <Checkbox
           name="isBestSeller"
