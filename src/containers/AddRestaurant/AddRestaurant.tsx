@@ -5,10 +5,7 @@ import {
   TimingsWrapper,
 } from "./AddRestaurant.styles";
 import TextInput from "../../components/TextInput/TextInput";
-import {
-  AREA_TYPES_LIST,
-  FIELD_NAMES_FOR_CUSTOM_VALIDATION,
-} from "./AddRestaurant.constants";
+import { FIELD_NAMES_FOR_CUSTOM_VALIDATION } from "./AddRestaurant.constants";
 import Checkbox from "../../components/Checkbox/Checkbox";
 import { InputTypes } from "../../components/TextInput/TextInput.types";
 import Button from "../../components/Button/Button";
@@ -22,13 +19,13 @@ import {
 import ImageInput from "../../components/ImageInput/ImageInput";
 import { useLocation, useNavigate } from "react-router-dom";
 import TimePicker from "../../components/TimePicker/TimePicker";
-import { SetTiming, Timing } from "./AddRestaurant.types";
+import { AREA_TYPES, SetTiming, Timing } from "./AddRestaurant.types";
 import { addRestaurant, saveRestaurantDetails } from "../../actions/actions";
 import { useUserStates } from "../../store/userStore";
 import moment from "moment";
 import Section from "../../components/Section/Section";
 import { useCommonStates } from "../../store/commonStore";
-import { convertToCapitalCase, getSelectableList } from "../../common/utils";
+import { convertToCapitalCase } from "../../common/utils";
 import Select from "../../components/Select/Select";
 import { performCustomValidations } from "./AddRestaurant.helpers";
 import Loader from "../../components/Loader/Loader";
@@ -45,12 +42,12 @@ const AddRestaurant = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const [localCuisines, setLocalCuisines] = useState<
-    { label: string; value: string }[]
-  >([...getSelectableList(resChoices?.cuisines || [])]);
+  const [cuisinesList, setCuisinesList] = useState<any[]>(
+    resChoices?.cuisines || []
+  );
 
-  const [cuisines, setCuisines] = useState<string[]>(editedRestaurant.cuisines);
-  const [areaName, setAreaName] = useState<string>(
+  const [cuisines, setCuisines] = useState<any[]>(editedRestaurant.cuisines);
+  const [areaName, setAreaName] = useState<any[]>(
     editedRestaurant.location?.areaName
   );
 
@@ -102,15 +99,15 @@ const AddRestaurant = () => {
   const addNewItemToCuisines = (values: any) => {
     const latestItem = values[values.length - 1];
     if (latestItem.__isNew__) {
-      setLocalCuisines([
-        ...localCuisines,
+      setCuisinesList([
+        ...cuisinesList,
         {
           label: convertToCapitalCase(latestItem.label),
           value: latestItem.value.toUpperCase(),
         },
       ]);
     }
-    setCuisines(values.map((item: any) => item.value));
+    setCuisines(values);
   };
 
   const onSubmit = async (event: any) => {
@@ -119,8 +116,17 @@ const AddRestaurant = () => {
     const formData = new FormData(event.target);
     const formDataObject = Object.fromEntries(formData.entries());
 
+    const { name, location, fullAddress, freeDeliveryDistance, avgPrice } =
+      formDataObject;
+
+    const fieldsForValidation = {
+      ...formDataObject,
+      cuisines,
+      areaName,
+    };
+
     const validationsPassed = performCustomValidations(
-      formDataObject,
+      fieldsForValidation,
       FIELD_NAMES_FOR_CUSTOM_VALIDATION
     );
 
@@ -130,10 +136,6 @@ const AddRestaurant = () => {
       return;
     }
 
-    console.log("formDataObject", formDataObject);
-
-    const { name, location, fullAddress, freeDeliveryDistance, avgPrice } =
-      formDataObject;
     const payload = {
       user: loggedInUser,
       name,
@@ -364,21 +366,23 @@ const AddRestaurant = () => {
           defaultValue={editedRestaurant.location?.fullAddress}
         />
         <Select
+          isRequired
           isMulti
           isCreatable
           label="Restaurant Cuisine"
           name="cuisines"
-          list={localCuisines}
+          list={cuisinesList}
           value={cuisines}
           onChange={addNewItemToCuisines}
           validationError={validationErrors.cuisines}
         />
         <Select
+          isRequired
           label="Restaurant Area"
           name="areaName"
-          list={AREA_TYPES_LIST}
+          list={Object.values(AREA_TYPES)}
           value={areaName}
-          onChange={(value: any) => setAreaName(value.value)}
+          onChange={(value: any) => setAreaName(value)}
           validationError={validationErrors.area}
         />
         <TextInput

@@ -12,6 +12,7 @@ const Button = React.forwardRef(
       <ButtonContainer
         className={className}
         disabled={!!isDisabled}
+        isLoading={isLoading}
         onClick={onClick}
       >
         <StyledButton ref={ref} type={type}>

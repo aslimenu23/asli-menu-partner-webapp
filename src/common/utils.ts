@@ -24,6 +24,7 @@ export const removeItemInLocalStorageWithAsliMenuPrefix = () => {
 };
 
 export const convertToCapitalCase = (anyString: string) => {
+  anyString = anyString.toLowerCase();
   const words = anyString.split(" ");
   const capitalCaseWords = words.map(
     (word) => word.charAt(0).toUpperCase() + word.slice(1)
@@ -32,10 +33,10 @@ export const convertToCapitalCase = (anyString: string) => {
   return capitalCaseName;
 };
 
-export const getSelectableList = (values: string[]) => {
+export const getSelectableList: any = (values: string[]) => {
   if (!values) return [];
   return values.map((value) => ({
-    label: convertToCapitalCase(value),
-    value: value.toUpperCase(),
+    label: value ? convertToCapitalCase(value) : "",
+    value: value ? convertToCapitalCase(value) : "",
   }));
 };

@@ -1,11 +1,14 @@
-export const performCustomValidations = (
-  formData: object,
-  fields: string[]
-) => {
+export const performCustomValidations = (data: object, fields: string[]) => {
   const errors: any = {};
   let isValid = true;
   fields.forEach((field) => {
-    if (!formData[field as keyof typeof formData]) {
+    if (!data[field as keyof typeof data]) {
+      isValid = false;
+      errors[field] = "Required";
+    } else if (
+      Array.isArray(data[field as keyof typeof data]) &&
+      (data[field as keyof typeof data] as any[]).length === 0
+    ) {
       isValid = false;
       errors[field] = "Required";
     }

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Select from "react-select";
 import CreatableSelect from "react-select/creatable";
+import { getSelectableList } from "../../common/utils";
 
 const CustomSelect = ({
   label,
@@ -11,47 +12,61 @@ const CustomSelect = ({
   isCreatable,
   isMulti,
   onChange,
+  isRequired,
 }: {
   name: string;
-  list: {
-    label: string;
-    value: string;
-  }[];
+  list: string[];
   label: string;
-  value: string | any[];
-  onChange: (value: string | any[]) => void;
+  value: string | string[];
+  onChange: (value: string | string[]) => void;
   isRequired?: boolean;
   isCreatable?: boolean;
   isMulti?: boolean;
   validationError?: string;
 }) => {
-  const [localState, setLocalState] = useState(value);
+  const [localState, setLocalState] = useState(
+    getSelectableList(isMulti ? value : [value])
+  );
 
   const onSelectChange = (selectValues: any | any[]) => {
-    setLocalState(selectValues);
-    onChange(selectValues);
+    if (isMulti) {
+      setLocalState(
+        getSelectableList(selectValues.map((item: any) => item.value))
+      );
+      onChange(selectValues.map((item: any) => item.value));
+    } else {
+      setLocalState(getSelectableList([selectValues.value]));
+      onChange(selectValues.value);
+    }
   };
+
+  const options = getSelectableList(list);
 
   const SelectComponent = isCreatable ? CreatableSelect : Select;
 
   return (
     <>
-      {label && <label htmlFor={name}>{label}</label>}
+      {label && (
+        <label htmlFor={name}>
+          {label} {isRequired ? "*" : ""}
+        </label>
+      )}
       <SelectComponent
         name={name}
         value={localState}
-        options={list as readonly any[]}
+        options={options}
         onChange={onSelectChange}
         isMulti={isMulti}
         styles={{
-          control: (baseStyles, state) => ({
+          control: (baseStyles) => ({
             ...baseStyles,
             height: "30px",
+            marginBottom: validationError ? "" : "10px",
           }),
         }}
       />
       {validationError ? (
-        <div style={{ margin: "10px 0", color: "red", fontSize: 12 }}>
+        <div style={{ marginBottom: "10px", color: "red", fontSize: 12 }}>
           {validationError}
         </div>
       ) : (

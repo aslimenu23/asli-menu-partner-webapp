@@ -1,11 +1,20 @@
 import { styled } from "styled-components";
 
-export const ButtonContainer = styled.div<{ disabled: boolean }>`
+export const ButtonContainer = styled.div<{
+  disabled: boolean;
+  isLoading?: boolean;
+}>`
   ${({ disabled }) =>
     disabled
       ? `
   pointer-events: none;
   opacity: 0.2;`
+      : ""}
+
+  ${({ isLoading }) =>
+    isLoading
+      ? `
+  pointer-events: none;`
       : ""}
 `;
 

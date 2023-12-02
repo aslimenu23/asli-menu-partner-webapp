@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import TextInput from "../../../components/TextInput/TextInput";
 import Select from "../../../components/Select/Select";
-import { CATEGORY_LIST, DISH_TYPES_LIST } from "./MenuForm.constants";
 import Checkbox from "../../../components/Checkbox/Checkbox";
 import Button from "../../../components/Button/Button";
 import { FormFooter, MenuFormWrapper } from "./MenuForm.styles";
+import { useCommonStates } from "../../../store/commonStore";
+import { CATEGORY, DISH_TYPES } from "./MenuForm.types";
 
 const MenuForm = ({
   item,
@@ -19,31 +20,65 @@ const MenuForm = ({
   const [name, setName] = useState(item?.name);
   const [dishType, setDishType] = useState(item?.dishType);
 
+  const resChoices = useCommonStates().resChoices;
+
+  const [categoryList, setCategoryList] = useState<any[]>([
+    ...Object.values(CATEGORY),
+    ...(resChoices?.dishCategories || []),
+  ]);
+  const [dishNames, setDishNames] = useState<any[]>(
+    resChoices?.dishNames || []
+  );
+
   const onSubmit = (event: any) => {
     event.preventDefault();
     const formData = new FormData(event.target);
+    const formDataObject = Object.fromEntries(formData.entries());
 
-    onChange(Object.fromEntries(formData.entries()));
+    const menuItem = {
+      ...formDataObject,
+      category,
+      name,
+      dishType,
+    };
+
+    onChange(menuItem);
+  };
+
+  const onCategoryChange = (value: any) => {
+    setCategory(value);
+    if (value.__isNew__) {
+      setCategoryList([...categoryList, ...value.value]);
+    }
+  };
+
+  const onNameChange = (value: any) => {
+    setName(value);
+    if (value.__isNew__) {
+      setDishNames([...dishNames, ...value.value]);
+    }
   };
 
   return (
     <MenuFormWrapper>
       <form onSubmit={onSubmit}>
         <Select
+          isCreatable
           isRequired
-          list={CATEGORY_LIST}
+          list={categoryList}
           name="category"
           label="Category"
           value={category}
-          onChange={(value: any) => setCategory(value)}
+          onChange={onCategoryChange}
         />
         <Select
+          isCreatable
           isRequired
-          list={CATEGORY_LIST}
+          list={dishNames}
           name="name"
           label="Item Name"
           value={name}
-          onChange={(value: any) => setName(value)}
+          onChange={onNameChange}
         />
         <TextInput
           name="description"
@@ -58,7 +93,7 @@ const MenuForm = ({
         />
         <Select
           isRequired
-          list={DISH_TYPES_LIST}
+          list={Object.values(DISH_TYPES)}
           name="dishType"
           label="Type"
           value={dishType}

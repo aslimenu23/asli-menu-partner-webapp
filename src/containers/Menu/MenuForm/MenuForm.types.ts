@@ -1,14 +1,14 @@
 export enum DISH_TYPES {
-  VEG = "veg",
-  VEG_EGG = "veg_egg",
-  NON_VEG = "non_veg",
+  Veg = "Veg",
+  Veg_Egg = "Veg_Egg",
+  Non_Veg = "Non_Veg",
 }
 
 export enum CATEGORY {
-  SNACKS = "snacks",
-  CHINESE = "chinese",
-  NORTH_INDIAN = "north_indian",
-  SOUTH_INDIAN = "south_indian",
-  HOT_BEVERAGES = "hot_beverages",
-  COLD_BEVERAGES = "cold_beverages",
+  Snacks = "Snacks",
+  chinese = "chinese",
+  North_indian = "North_indian",
+  South_indian = "South_indian",
+  Hot_beverages = "Hot_beverages",
+  Cold_beverages = "Cold_beverages",
 }

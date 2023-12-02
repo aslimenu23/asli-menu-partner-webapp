@@ -54,7 +54,6 @@ const Menu = () => {
     const response = await saveMenuDetails(payload);
     if (response) {
       setSnackbarMessage("Menu saved successfully!");
-      goToRestaurantsPage();
     }
   };
 
