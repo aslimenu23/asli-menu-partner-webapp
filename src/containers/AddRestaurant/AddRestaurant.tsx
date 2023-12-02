@@ -213,7 +213,7 @@ const AddRestaurant = () => {
 
     const currentPhoneNumbers = phoneNumbers.map((phoneNumber, index) => {
       return (
-        <PhoneNumbersWrapper key={`${index}_${phoneNumber}`}>
+        <PhoneNumbersWrapper key={index}>
           <TextInput
             noMargin
             isRequired={index < MAX_RESTAURANT_PHONE_COUNT / 2}
