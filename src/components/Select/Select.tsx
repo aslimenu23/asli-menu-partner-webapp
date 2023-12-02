@@ -40,7 +40,7 @@ const CustomSelect = ({
     }
   };
 
-  const options = getSelectableList(list);
+  const options = getSelectableList(Array.from(new Set(list)));
 
   const SelectComponent = isCreatable ? CreatableSelect : Select;
 
