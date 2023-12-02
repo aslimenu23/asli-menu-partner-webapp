@@ -4,4 +4,5 @@ export const API_ENDPOINTS = {
   isNewUser: `${API_URL}/user/isnewuser/`,
   user: `${API_URL}/user/`,
   restaurant: `${API_URL}/partner/restaurant/`,
+  restaurantChoices: `${API_URL}/partner/restaurant/restaurant_choices/`,
 };

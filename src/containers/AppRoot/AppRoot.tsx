@@ -10,15 +10,19 @@ import firebase, {
 import Loader from "../../components/Loader/Loader";
 import { AppRootContentWrapper, AppRootWrapper } from "./AppRoot.styles";
 import { removeItemInLocalStorageWithAsliMenuPrefix } from "../../common/utils";
-import { getUser } from "../../actions/actions";
+import { getUser, getRestaurantChoices } from "../../actions/actions";
 import { ROUTES } from "../../common/constants";
 import Snackbar from "../Snackbar/Snackbar";
+import { useCommonActions } from "../../store/commonStore";
 
 const AppRoot = () => {
   const navigate = useNavigate();
   const location = useLocation();
+
   const loggedInUser = useUserStates().loggedInUser;
   const setLoggedInUser = useUserActions().setLoggedInUser;
+
+  const setResChoices = useCommonActions().setResChoices;
 
   const [loading, setLoading] = useState(true);
 
@@ -32,6 +36,10 @@ const AppRoot = () => {
           await signOut(auth);
           navigate(ROUTES.LOGIN, { replace: true });
         } else {
+          const resChoices = await getRestaurantChoices({
+            user: userDetails?.data,
+          });
+          setResChoices(resChoices);
           setLoggedInUser(userDetails?.data);
         }
       } else {

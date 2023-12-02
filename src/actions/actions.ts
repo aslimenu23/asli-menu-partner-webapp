@@ -120,3 +120,15 @@ export const saveMenuDetails = async (payload: any) => {
     return data.data;
   } catch (err) {}
 };
+
+export const getRestaurantChoices: any = async (payload: any) => {
+  try {
+    const customHeaders = {
+      user: payload.user.id,
+    };
+    const data = await axios.get(API_ENDPOINTS.restaurantChoices, {
+      headers: customHeaders,
+    });
+    return data.data;
+  } catch (err) {}
+};
