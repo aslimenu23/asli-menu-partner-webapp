@@ -6,6 +6,7 @@ import Button from "../../../components/Button/Button";
 import { FormFooter, MenuFormWrapper } from "./MenuForm.styles";
 import { useCommonStates } from "../../../store/commonStore";
 import { CATEGORY, DISH_TYPES } from "./MenuForm.types";
+import { performCustomValidations } from "../../../common/utils";
 
 const MenuForm = ({
   item,
@@ -19,6 +20,7 @@ const MenuForm = ({
   const [category, setCategory] = useState(item?.category);
   const [name, setName] = useState(item?.name);
   const [dishType, setDishType] = useState(item?.dishType);
+  const [validationErrors, setValidationErrors] = useState<any>({});
 
   const resChoices = useCommonStates().resChoices;
 
@@ -41,6 +43,17 @@ const MenuForm = ({
       name,
       dishType,
     };
+
+    const validations = performCustomValidations(menuItem, [
+      "category",
+      "name",
+      "dishType",
+    ]);
+
+    if (!validations.isValid) {
+      setValidationErrors(validations.errors);
+      return;
+    }
 
     onChange(menuItem);
   };
@@ -70,6 +83,7 @@ const MenuForm = ({
           label="Category"
           value={category}
           onChange={onCategoryChange}
+          validationError={validationErrors.category}
         />
         <Select
           isCreatable
@@ -79,6 +93,7 @@ const MenuForm = ({
           label="Item Name"
           value={name}
           onChange={onNameChange}
+          validationError={validationErrors.name}
         />
         <TextInput
           name="description"
@@ -98,6 +113,7 @@ const MenuForm = ({
           label="Type"
           value={dishType}
           onChange={(value: any) => setDishType(value)}
+          validationError={validationErrors.dishType}
         />
         <Checkbox
           name="isBestSeller"

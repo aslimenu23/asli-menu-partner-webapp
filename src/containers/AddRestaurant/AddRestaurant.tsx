@@ -25,9 +25,11 @@ import { useUserStates } from "../../store/userStore";
 import moment from "moment";
 import Section from "../../components/Section/Section";
 import { useCommonStates } from "../../store/commonStore";
-import { convertToCapitalCase } from "../../common/utils";
+import {
+  convertToCapitalCase,
+  performCustomValidations,
+} from "../../common/utils";
 import Select from "../../components/Select/Select";
-import { performCustomValidations } from "./AddRestaurant.helpers";
 import Loader from "../../components/Loader/Loader";
 
 const AddRestaurant = () => {
