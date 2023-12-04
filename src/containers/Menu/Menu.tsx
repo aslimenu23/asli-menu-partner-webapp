@@ -19,11 +19,15 @@ const Menu = () => {
 
   const [menu, setMenu] = useState<any[]>([]);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [buttonLoading, setButtonLoading] = useState(false);
 
   const currentRestaurant = location.state?.restaurant;
 
   useEffect(() => {
+    setLoading(true);
     setMenu(currentRestaurant?.editValue?.menu || []);
+    setLoading(false);
   }, [currentRestaurant?.editValue?.menu]);
 
   const onAddItem = (item: any) => {
@@ -46,6 +50,7 @@ const Menu = () => {
   };
 
   const saveMenu = async () => {
+    setButtonLoading(true);
     const payload = {
       restaurantId: currentRestaurant.id,
       user: loggedInUser,
@@ -54,6 +59,8 @@ const Menu = () => {
     const response = await saveMenuDetails(payload);
     if (response) {
       setSnackbarMessage("Menu saved successfully!");
+      setButtonLoading(false);
+      goToRestaurantsPage();
     }
   };
 
@@ -62,7 +69,7 @@ const Menu = () => {
     goToRestaurantsPage();
   }
 
-  if (!menu) return <Loader isFullScreen />;
+  if (loading) return <Loader isFullScreen />;
   return (
     <AddMenuWrapper>
       <MenuList menu={menu} onChange={onChange} />
@@ -76,7 +83,9 @@ const Menu = () => {
       )}
       {menu.length ? (
         <SaveMenuCta>
-          <Button onClick={saveMenu}>Save Menu</Button>
+          <Button isLoading={buttonLoading} onClick={saveMenu}>
+            Save Menu
+          </Button>
         </SaveMenuCta>
       ) : (
         <></>

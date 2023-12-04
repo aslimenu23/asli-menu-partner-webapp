@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import {
   AddRestaurantWrapper,
   PhoneNumbersWrapper,
-  TimingsWrapper,
 } from "./AddRestaurant.styles";
 import TextInput from "../../components/TextInput/TextInput";
 import { FIELD_NAMES_FOR_CUSTOM_VALIDATION } from "./AddRestaurant.constants";
@@ -10,15 +9,9 @@ import Checkbox from "../../components/Checkbox/Checkbox";
 import { InputTypes } from "../../components/TextInput/TextInput.types";
 import Button from "../../components/Button/Button";
 import AddDeleteIcon from "../../components/AddDeleteIcon/AddDeleteIcon";
-import {
-  MAX_RESTAURANT_PHONE_COUNT,
-  MAX_RESTAURANT_PHOTO_COUNT,
-  MAX_RESTAURANT_TIMINGS_COUNT,
-  ROUTES,
-} from "../../common/constants";
+import { MAX_RESTAURANT_PHOTO_COUNT, ROUTES } from "../../common/constants";
 import ImageInput from "../../components/ImageInput/ImageInput";
 import { useLocation, useNavigate } from "react-router-dom";
-import TimePicker from "../../components/TimePicker/TimePicker";
 import { AREA_TYPES, SetTiming, Timing } from "./AddRestaurant.types";
 import { addRestaurant, saveRestaurantDetails } from "../../actions/actions";
 import { useUserStates } from "../../store/userStore";
@@ -31,6 +24,8 @@ import {
 } from "../../common/utils";
 import Select from "../../components/Select/Select";
 import Loader from "../../components/Loader/Loader";
+import PhoneNumbers from "./PhoneNumbers";
+import Timings from "./Timings";
 
 const AddRestaurant = () => {
   const navigate = useNavigate();
@@ -194,156 +189,6 @@ const AddRestaurant = () => {
     }
   };
 
-  const renderPhoneNumbers = () => {
-    const addPhoneNumber = () => {
-      setPhoneNumbers([...phoneNumbers, ""]);
-    };
-
-    const removePhoneNumber = (index: number) => {
-      phoneNumbers.splice(index, 1);
-      setPhoneNumbers([...phoneNumbers]);
-    };
-
-    const onPhoneNumberChange = (value: string, index: number) => {
-      setPhoneNumbers((prevPhoneNumbers) => {
-        prevPhoneNumbers[index] = value;
-        return [...prevPhoneNumbers];
-      });
-    };
-
-    const currentPhoneNumbers = phoneNumbers.map((phoneNumber, index) => {
-      return (
-        <PhoneNumbersWrapper key={index}>
-          <TextInput
-            noMargin
-            isRequired={index < MAX_RESTAURANT_PHONE_COUNT / 2}
-            label={`Phone Number ${index + 1}`}
-            name={`phone_${index + 1}`}
-            defaultValue={phoneNumber}
-            inputType={InputTypes.MOBILE}
-            onChange={(value) => onPhoneNumberChange(value, index)}
-          />
-          <AddDeleteIcon
-            index={index}
-            list={phoneNumbers}
-            listMaxOut={MAX_RESTAURANT_PHONE_COUNT}
-            addCb={addPhoneNumber}
-            deleteCb={removePhoneNumber}
-          />
-        </PhoneNumbersWrapper>
-      );
-    });
-
-    return currentPhoneNumbers;
-  };
-
-  const renderPhotoUploadInputs = () => {
-    const addImage = () => {
-      setImages([...images, {}]);
-    };
-
-    const removeImage = (index: number) => {
-      images.splice(index, 1);
-      setImages([...images]);
-    };
-
-    const onImageUpload = (file: any, index: number) => {
-      setImages((prevImages: any) => {
-        prevImages[index] = file;
-        return [...prevImages];
-      });
-    };
-
-    const currentImages = images.map((image: any, index: number) => {
-      return (
-        <PhoneNumbersWrapper key={index}>
-          <ImageInput
-            noMargin
-            isRequired={index < MAX_RESTAURANT_PHOTO_COUNT / 2}
-            name={`image_${index + 1}`}
-            label={`Upload restaurant photo ${index + 1}`}
-            onChange={(file) => onImageUpload(file, index)}
-          />
-          <AddDeleteIcon
-            index={index}
-            list={images}
-            listMaxOut={MAX_RESTAURANT_PHOTO_COUNT}
-            addCb={addImage}
-            deleteCb={removeImage}
-          />
-        </PhoneNumbersWrapper>
-      );
-    });
-
-    return currentImages;
-  };
-
-  const renderTimings = ({
-    stateKey,
-    updateStateFunction,
-    nameKey,
-    title,
-  }: {
-    stateKey: Timing[];
-    updateStateFunction: SetTiming;
-    nameKey: string;
-    title: string;
-  }) => {
-    const addTime = () => {
-      updateStateFunction([
-        ...stateKey,
-        {
-          startTime: moment(),
-          endTime: moment(),
-        },
-      ]);
-    };
-
-    const removeTime = (index: number) => {
-      restaurantTimings.splice(index, 1);
-      updateStateFunction([...stateKey]);
-    };
-
-    const onTimeChange = (value: any, index: number, key: string) => {
-      updateStateFunction((prevTimings) => {
-        // @ts-ignore
-        prevTimings[index][key] = moment(value).format("HH:mm");
-        return [...prevTimings];
-      });
-    };
-
-    const currentTimings = stateKey.map((time: any, index: number) => {
-      return (
-        <TimingsWrapper key={index}>
-          <label>{title}</label>
-          <div>
-            <TimePicker
-              label="Start Time"
-              name={`${nameKey}_from_${index + 1}`}
-              value={moment(stateKey[index].startTime, "HH:mm")}
-              onChange={(value) => onTimeChange(value, index, "startTime")}
-            />
-            <TimePicker
-              label="End Time"
-              name={`${nameKey}_to_${index + 1}`}
-              value={moment(stateKey[index].endTime, "HH:mm")}
-              onChange={(value) => onTimeChange(value, index, "endTime")}
-            />
-            <AddDeleteIcon
-              index={index}
-              list={stateKey}
-              listMaxOut={MAX_RESTAURANT_TIMINGS_COUNT}
-              addCb={addTime}
-              deleteCb={removeTime}
-            />
-          </div>
-        </TimingsWrapper>
-      );
-    });
-
-    return currentTimings;
-  };
-
   return (
     <AddRestaurantWrapper>
       <form onSubmit={onSubmit}>
@@ -393,10 +238,9 @@ const AddRestaurant = () => {
           inputType={InputTypes.NUMBER}
           defaultValue={editedRestaurant.avgPrice}
         />
-        {/* {renderPhotoUploadInputs()} */}
 
         <Section text="Manager/Owner Details" />
-        {renderPhoneNumbers()}
+        <PhoneNumbers phoneNumbers={phoneNumbers} onChange={setPhoneNumbers} />
         <Checkbox
           label="Is managed by owner?"
           name="isManagedByOwner"
@@ -411,16 +255,13 @@ const AddRestaurant = () => {
           value={dineIn.toString()}
           onChange={(value) => setDineIn(value)}
         />
-        {dineIn ? (
-          renderTimings({
-            stateKey: restaurantTimings,
-            updateStateFunction: setRestaurantTimings,
-            nameKey: "restaurantTimings",
-            title: "Restaurant Timings",
-          })
-        ) : (
-          <></>
-        )}
+        <Timings
+          time={restaurantTimings}
+          onChange={setRestaurantTimings}
+          name="restaurantTimings"
+          title="Restaurant Timings"
+          shouldShow={dineIn}
+        />
 
         {/* Delivery */}
         <Checkbox
@@ -429,14 +270,15 @@ const AddRestaurant = () => {
           value={delivery.toString()}
           onChange={(value) => setDelivery(value)}
         />
+        <Timings
+          time={deliveryTimings}
+          onChange={setDeliveryTimings}
+          name="deliveryTimings"
+          title="Delivery Timings"
+          shouldShow={delivery}
+        />
         {delivery ? (
           <>
-            {renderTimings({
-              stateKey: deliveryTimings,
-              updateStateFunction: setDeliveryTimings,
-              nameKey: "deliveryTimings",
-              title: "Delivery Timings",
-            })}
             <TextInput
               label="Free Delivery Distance"
               name="freeDeliveryDistance"
@@ -464,16 +306,13 @@ const AddRestaurant = () => {
           value={takeaway.toString()}
           onChange={(value) => setTakeaway(value)}
         />
-        {takeaway ? (
-          renderTimings({
-            stateKey: takeawayTimings,
-            updateStateFunction: setTakeawayTimings,
-            nameKey: "takeawayTimings",
-            title: "Takeaway Timings",
-          })
-        ) : (
-          <></>
-        )}
+        <Timings
+          time={takeawayTimings}
+          onChange={setTakeawayTimings}
+          name="takeawayTimings"
+          title="Takeaway Timings"
+          shouldShow={takeaway}
+        />
 
         <Button type="submit">
           {loading ? <Loader isSmall /> : <>Submit</>}

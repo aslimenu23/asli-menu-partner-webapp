@@ -14,12 +14,12 @@ const AddDeleteIcon = ({
   addCb: () => void;
   deleteCb: (index: number) => void;
 }) => {
-  if (index === list.length - 1 && list.length === listMaxOut) return <></>;
-
-  if (index === list.length - 1) {
+  if (index === list.length - 1 && list.length < listMaxOut) {
     return (
       <>
-        {index > 0  && <AiFillMinusCircle size={24} onClick={() => deleteCb(index)} />}
+        {index > 0 && (
+          <AiFillMinusCircle size={24} onClick={() => deleteCb(index)} />
+        )}
         <AiFillPlusCircle size={24} onClick={addCb} />
       </>
     );
