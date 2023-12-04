@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { PhoneNumbersWrapper } from "./AddRestaurant.styles";
-import TextInput from "../../components/TextInput/TextInput";
-import { MAX_RESTAURANT_PHONE_COUNT } from "../../common/constants";
-import AddDeleteIcon from "../../components/AddDeleteIcon/AddDeleteIcon";
-import { InputTypes } from "../../components/TextInput/TextInput.types";
+import { PhoneNumbersWrapper } from "../AddRestaurant.styles";
+import TextInput from "../../../components/TextInput/TextInput";
+import { MAX_RESTAURANT_PHONE_COUNT } from "../../../common/constants";
+import AddDeleteIcon from "../../../components/AddDeleteIcon/AddDeleteIcon";
+import { InputTypes } from "../../../components/TextInput/TextInput.types";
 import { v4 as uuid } from "uuid";
 
 const PhoneNumbers = ({ phoneNumbers, onChange }: any) => {

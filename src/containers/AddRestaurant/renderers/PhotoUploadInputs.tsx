@@ -1,8 +1,8 @@
 import React from "react";
-import { PhoneNumbersWrapper } from "./AddRestaurant.styles";
-import ImageInput from "../../components/ImageInput/ImageInput";
-import { MAX_RESTAURANT_PHOTO_COUNT } from "../../common/constants";
-import AddDeleteIcon from "../../components/AddDeleteIcon/AddDeleteIcon";
+import { PhoneNumbersWrapper } from "../AddRestaurant.styles";
+import ImageInput from "../../../components/ImageInput/ImageInput";
+import { MAX_RESTAURANT_PHOTO_COUNT } from "../../../common/constants";
+import AddDeleteIcon from "../../../components/AddDeleteIcon/AddDeleteIcon";
 
 const PhotoUploadInputs = ({ images, onChange }: any) => {
   const addImage = () => {

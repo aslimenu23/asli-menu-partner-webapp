@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { TimingsWrapper } from "./AddRestaurant.styles";
-import TimePicker from "../../components/TimePicker/TimePicker";
+import { TimingsWrapper } from "../AddRestaurant.styles";
+import TimePicker from "../../../components/TimePicker/TimePicker";
 import moment from "moment";
-import AddDeleteIcon from "../../components/AddDeleteIcon/AddDeleteIcon";
-import { MAX_RESTAURANT_TIMINGS_COUNT } from "../../common/constants";
+import AddDeleteIcon from "../../../components/AddDeleteIcon/AddDeleteIcon";
+import { MAX_RESTAURANT_TIMINGS_COUNT } from "../../../common/constants";
 import { v4 as uuid } from "uuid";
 
 const Timings = ({ time, onChange, name, title, shouldShow }: any) => {

@@ -1,18 +1,13 @@
 import React, { useState } from "react";
-import {
-  AddRestaurantWrapper,
-  PhoneNumbersWrapper,
-} from "./AddRestaurant.styles";
+import { AddRestaurantWrapper } from "./AddRestaurant.styles";
 import TextInput from "../../components/TextInput/TextInput";
 import { FIELD_NAMES_FOR_CUSTOM_VALIDATION } from "./AddRestaurant.constants";
 import Checkbox from "../../components/Checkbox/Checkbox";
 import { InputTypes } from "../../components/TextInput/TextInput.types";
 import Button from "../../components/Button/Button";
-import AddDeleteIcon from "../../components/AddDeleteIcon/AddDeleteIcon";
-import { MAX_RESTAURANT_PHOTO_COUNT, ROUTES } from "../../common/constants";
-import ImageInput from "../../components/ImageInput/ImageInput";
+import { ROUTES } from "../../common/constants";
 import { useLocation, useNavigate } from "react-router-dom";
-import { AREA_TYPES, SetTiming, Timing } from "./AddRestaurant.types";
+import { AREA_TYPES, Timing } from "./AddRestaurant.types";
 import { addRestaurant, saveRestaurantDetails } from "../../actions/actions";
 import { useUserStates } from "../../store/userStore";
 import moment from "moment";
@@ -24,8 +19,8 @@ import {
 } from "../../common/utils";
 import Select from "../../components/Select/Select";
 import Loader from "../../components/Loader/Loader";
-import PhoneNumbers from "./PhoneNumbers";
-import Timings from "./Timings";
+import PhoneNumbers from "./renderers/PhoneNumbers";
+import Timings from "./renderers/Timings";
 
 const AddRestaurant = () => {
   const navigate = useNavigate();
