@@ -12,4 +12,7 @@ export const SnackbarContainer = styled.div<{ show: boolean }>`
   color: white;
   border-radius: 8px;
   transition: bottom 1s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 `;

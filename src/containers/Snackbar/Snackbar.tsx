@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useCommonActions, useCommonStates } from "../../store/commonStore";
 import { SnackbarContainer } from "./Snackbar.styles";
+import { IoMdCloseCircle } from "react-icons/io";
 
 const Snackbar = () => {
   const { snackbarMessage } = useCommonStates();
@@ -19,6 +20,7 @@ const Snackbar = () => {
   return snackbarMessage ? (
     <SnackbarContainer show={snackbarMessage.length > 0}>
       {snackbarMessage}
+      <IoMdCloseCircle onClick={() => setSnackbarMessage("")} />
     </SnackbarContainer>
   ) : (
     <></>
