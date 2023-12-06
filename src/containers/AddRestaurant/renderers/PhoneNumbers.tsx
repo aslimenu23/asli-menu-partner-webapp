@@ -14,7 +14,13 @@ const PhoneNumbers = ({ phoneNumbers, onChange }: any) => {
   }, []);
 
   const addPhoneNumber = () => {
-    onChange([...phoneNumbers, ""]);
+    onChange([
+      ...phoneNumbers,
+      {
+        value: "",
+        error: false,
+      },
+    ]);
   };
 
   const removePhoneNumber = (index: number) => {
@@ -23,8 +29,15 @@ const PhoneNumbers = ({ phoneNumbers, onChange }: any) => {
     onChange([...phoneNumbers]);
   };
 
-  const onPhoneNumberChange = (value: string, index: number) => {
-    phoneNumbers[index] = value;
+  const onPhoneNumberChange = (
+    value: string,
+    error: boolean,
+    index: number
+  ) => {
+    phoneNumbers[index] = {
+      value,
+      error,
+    };
 
     onChange([...phoneNumbers]);
   };
@@ -38,16 +51,18 @@ const PhoneNumbers = ({ phoneNumbers, onChange }: any) => {
             isRequired={index < MAX_RESTAURANT_PHONE_COUNT / 2}
             label={`Phone Number ${index + 1}`}
             name={`phone_${index + 1}`}
-            defaultValue={phoneNumber}
+            defaultValue={phoneNumber.value}
             inputType={InputTypes.MOBILE}
-            onChange={(value) => onPhoneNumberChange(value, index)}
+            onChange={(value, isValid) =>
+              onPhoneNumberChange(value, !isValid, index)
+            }
           />
           <AddDeleteIcon
             index={index}
             list={phoneNumbers}
-            listMaxOut={MAX_RESTAURANT_PHONE_COUNT}
             addCb={addPhoneNumber}
             deleteCb={removePhoneNumber}
+            listMaxOut={MAX_RESTAURANT_PHONE_COUNT}
           />
         </PhoneNumbersWrapper>
       );

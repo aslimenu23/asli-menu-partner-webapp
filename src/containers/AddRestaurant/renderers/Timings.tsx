@@ -11,7 +11,7 @@ const Timings = ({ time, onChange, name, title, shouldShow }: any) => {
 
   useEffect(() => {
     setKeyUUID(uuid());
-  }, []);
+  }, [time]);
 
   const addTime = () => {
     onChange([
@@ -25,15 +25,17 @@ const Timings = ({ time, onChange, name, title, shouldShow }: any) => {
 
   const removeTime = (index: number) => {
     time.splice(index, 1);
+    setKeyUUID(uuid());
     onChange([...time]);
   };
 
   const onTimeChange = (value: any, index: number, key: string) => {
-    time[index][key] = moment(value).format("HH:mm");
-    onChange(time);
+    time[index][key] = value;
+    setKeyUUID(uuid());
+    onChange([...time]);
   };
 
-  const currentTimings = time.map((time: any, index: number) => {
+  const currentTimings = time.map((t: any, index: number) => {
     return (
       <TimingsWrapper key={keyUUID + " " + index}>
         <label>{title}</label>
@@ -41,21 +43,23 @@ const Timings = ({ time, onChange, name, title, shouldShow }: any) => {
           <TimePicker
             label="Start Time"
             name={`${name}_from_${index + 1}`}
-            value={moment(time[index]?.startTime, "HH:mm")}
-            onChange={(value) => onTimeChange(value, index, "startTime")}
+            value={moment(t?.startTime, "HH:mm")}
+            onChange={(value) =>
+              onTimeChange(value.format("HH:mm"), index, "startTime")
+            }
           />
           <TimePicker
             label="End Time"
             name={`${name}_to_${index + 1}`}
-            value={moment(time[index]?.endTime, "HH:mm")}
+            value={moment(t?.endTime, "HH:mm")}
             onChange={(value) => onTimeChange(value, index, "endTime")}
           />
           <AddDeleteIcon
             index={index}
             list={time}
-            listMaxOut={MAX_RESTAURANT_TIMINGS_COUNT}
             addCb={addTime}
             deleteCb={removeTime}
+            listMaxOut={MAX_RESTAURANT_TIMINGS_COUNT}
           />
         </div>
       </TimingsWrapper>

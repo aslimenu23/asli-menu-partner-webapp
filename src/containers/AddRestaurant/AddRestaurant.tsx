@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { AddRestaurantWrapper } from "./AddRestaurant.styles";
 import TextInput from "../../components/TextInput/TextInput";
-import { FIELD_NAMES_FOR_CUSTOM_VALIDATION } from "./AddRestaurant.constants";
+import {
+  DEFAULT_TIME,
+  FIELD_NAMES_FOR_CUSTOM_VALIDATION,
+} from "./AddRestaurant.constants";
 import Checkbox from "../../components/Checkbox/Checkbox";
 import { InputTypes } from "../../components/TextInput/TextInput.types";
 import Button from "../../components/Button/Button";
@@ -12,7 +15,7 @@ import { addRestaurant, saveRestaurantDetails } from "../../actions/actions";
 import { useUserStates } from "../../store/userStore";
 import moment from "moment";
 import Section from "../../components/Section/Section";
-import { useCommonStates } from "../../store/commonStore";
+import { useCommonActions, useCommonStates } from "../../store/commonStore";
 import {
   convertToCapitalCase,
   performCustomValidations,
@@ -28,6 +31,7 @@ const AddRestaurant = () => {
 
   const loggedInUser = useUserStates().loggedInUser;
   const resChoices = useCommonStates().resChoices;
+  const setSnackbarMessage = useCommonActions().setSnackbarMessage;
 
   const editedRestaurant = location.state?.restaurant?.editValue || {};
   const editedRestaurantId = location.state?.restaurant?.id || "";
@@ -48,8 +52,11 @@ const AddRestaurant = () => {
   // Basic details
   const [phoneNumbers, setPhoneNumbers] = useState<any[]>(
     editedRestaurant.phoneNumbers && editedRestaurant.phoneNumbers.length > 0
-      ? editedRestaurant.phoneNumbers
-      : [""]
+      ? editedRestaurant.phoneNumbers.map((n: string) => ({
+          value: n,
+          error: false,
+        }))
+      : [{ value: "", error: false }]
   );
   const [images, setImages] = useState(
     editedRestaurant.images && editedRestaurant.images.length > 0
@@ -73,19 +80,19 @@ const AddRestaurant = () => {
     editedRestaurant.dineInDetails?.timings &&
       editedRestaurant.dineInDetails?.timings.length > 0
       ? editedRestaurant.dineInDetails?.timings
-      : [{ startTime: moment(), endTime: moment() }]
+      : [DEFAULT_TIME]
   );
   const [takeawayTimings, setTakeawayTimings] = useState<Timing[]>(
     editedRestaurant.takeawayDetails?.timings &&
       editedRestaurant.takeawayDetails?.timings.length > 0
       ? editedRestaurant.takeawayDetails?.timings
-      : [{ startTime: moment(), endTime: moment() }]
+      : [DEFAULT_TIME]
   );
   const [deliveryTimings, setDeliveryTimings] = useState<Timing[]>(
     editedRestaurant.deliveryDetails?.timings &&
       editedRestaurant.deliveryDetails?.timings.length > 0
       ? editedRestaurant.deliveryDetails?.timings
-      : [{ startTime: moment(), endTime: moment() }]
+      : [DEFAULT_TIME]
   );
 
   const addNewItemToCuisines = (values: any) => {
@@ -117,6 +124,9 @@ const AddRestaurant = () => {
       areaName,
     };
 
+    // TODO: Move the error checking to a generic function
+
+    // Validations for custom select
     const validationsPassed = performCustomValidations(
       fieldsForValidation,
       FIELD_NAMES_FOR_CUSTOM_VALIDATION
@@ -128,11 +138,28 @@ const AddRestaurant = () => {
       return;
     }
 
+    // Validation for facilities checkboxes
+    if (!(takeaway || delivery || dineIn)) {
+      setSnackbarMessage(
+        "Please select atleast one of the Facilities - Dine In, Delivery or TakeAway"
+      );
+      setLoading(false);
+      return;
+    }
+
+    // Validation for phone numbers
+    const anyPhoneNumbersHaveError = phoneNumbers.find((p) => p.error);
+    if (anyPhoneNumbersHaveError) {
+      setSnackbarMessage("Incorrect phone number");
+      setLoading(false);
+      return;
+    }
+
     const payload = {
       user: loggedInUser,
       name,
       images,
-      phoneNumbers,
+      phoneNumbers: phoneNumbers.map((p) => p.value),
       avgPrice,
       cuisines,
       location: {
@@ -160,9 +187,8 @@ const AddRestaurant = () => {
     };
 
     /**
-     * Add restaurant -> Add menu
+     * Add/Save restaurant details
      */
-
     let response = null;
     if (editedRestaurant) {
       response = await saveRestaurantDetails(payload, editedRestaurantId);
@@ -228,7 +254,7 @@ const AddRestaurant = () => {
           validationError={validationErrors.area}
         />
         <TextInput
-          label="Average Price"
+          label="Average Price For One"
           name="avgPrice"
           inputType={InputTypes.NUMBER}
           defaultValue={editedRestaurant.avgPrice}
