@@ -13,7 +13,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { AREA_TYPES, Timing } from "./AddRestaurant.types";
 import { addRestaurant, saveRestaurantDetails } from "../../actions/actions";
 import { useUserStates } from "../../store/userStore";
-import moment from "moment";
 import Section from "../../components/Section/Section";
 import { useCommonActions, useCommonStates } from "../../store/commonStore";
 import {
@@ -24,6 +23,7 @@ import Select from "../../components/Select/Select";
 import Loader from "../../components/Loader/Loader";
 import PhoneNumbers from "./renderers/PhoneNumbers";
 import Timings from "./renderers/Timings";
+import useAddRestaurantStates from "./hooks/addRestaurent.hook";
 
 const AddRestaurant = () => {
   const navigate = useNavigate();
@@ -36,64 +36,38 @@ const AddRestaurant = () => {
   const editedRestaurant = location.state?.restaurant?.editValue || {};
   const editedRestaurantId = location.state?.restaurant?.id || "";
 
-  const [loading, setLoading] = useState(false);
+  const {
+    states: addRestaurantStates,
+    actions: {
+      setName,
+      setResLocation,
+      setCuisines,
+      setAvgPriceForOne,
+      setPhoneNumbers,
+      setIsManagedByOwner,
+      setDineInDetails,
+      setTakeawayDetails,
+      setDeliveryDetails,
+      setCuisinesList,
+      setValidationErrors,
+      setLoading,
+    },
+  } = useAddRestaurantStates();
 
-  const [cuisinesList, setCuisinesList] = useState<any[]>(
-    resChoices?.cuisines || []
-  );
-
-  const [cuisines, setCuisines] = useState<any[]>(editedRestaurant.cuisines);
-  const [areaName, setAreaName] = useState<any[]>(
-    editedRestaurant.location?.areaName
-  );
-
-  const [validationErrors, setValidationErrors] = useState<any>({});
-
-  // Basic details
-  const [phoneNumbers, setPhoneNumbers] = useState<any[]>(
-    editedRestaurant.phoneNumbers && editedRestaurant.phoneNumbers.length > 0
-      ? editedRestaurant.phoneNumbers.map((n: string) => ({
-          value: n,
-          error: false,
-        }))
-      : [{ value: "", error: false }]
-  );
-  const [images, setImages] = useState(
-    editedRestaurant.images && editedRestaurant.images.length > 0
-      ? editedRestaurant.images
-      : [{}]
-  );
-
-  // boolean
-  const [dineIn, setDineIn] = useState(
-    !!editedRestaurant.dineInDetails?.enabled
-  );
-  const [takeaway, setTakeaway] = useState(
-    !!editedRestaurant.takeAwayDetails?.enabled
-  );
-  const [delivery, setDelivery] = useState(
-    !!editedRestaurant.deliveryDetails?.enabled
-  );
-
-  // Timings
-  const [restaurantTimings, setRestaurantTimings] = useState<Timing[]>(
-    editedRestaurant.dineInDetails?.timings &&
-      editedRestaurant.dineInDetails?.timings.length > 0
-      ? editedRestaurant.dineInDetails?.timings
-      : [DEFAULT_TIME]
-  );
-  const [takeawayTimings, setTakeawayTimings] = useState<Timing[]>(
-    editedRestaurant.takeawayDetails?.timings &&
-      editedRestaurant.takeawayDetails?.timings.length > 0
-      ? editedRestaurant.takeawayDetails?.timings
-      : [DEFAULT_TIME]
-  );
-  const [deliveryTimings, setDeliveryTimings] = useState<Timing[]>(
-    editedRestaurant.deliveryDetails?.timings &&
-      editedRestaurant.deliveryDetails?.timings.length > 0
-      ? editedRestaurant.deliveryDetails?.timings
-      : [DEFAULT_TIME]
-  );
+  const {
+    name,
+    resLocation,
+    cuisines,
+    avgPriceForOne,
+    phoneNumbers,
+    isManagedByOwner,
+    dineInDetails,
+    takeawayDetails,
+    deliveryDetails,
+    cuisinesList,
+    validationErrors,
+    loading,
+  } = addRestaurantStates;
 
   const addNewItemToCuisines = (values: any) => {
     const latestItem = values[values.length - 1];
@@ -121,7 +95,6 @@ const AddRestaurant = () => {
     const fieldsForValidation = {
       ...formDataObject,
       cuisines,
-      areaName,
     };
 
     // TODO: Move the error checking to a generic function
@@ -139,7 +112,13 @@ const AddRestaurant = () => {
     }
 
     // Validation for facilities checkboxes
-    if (!(takeaway || delivery || dineIn)) {
+    if (
+      !(
+        takeawayDetails.enabled ||
+        deliveryDetails.enabled ||
+        dineInDetails.enabled
+      )
+    ) {
       setSnackbarMessage(
         "Please select atleast one of the Facilities - Dine In, Delivery or TakeAway"
       );
@@ -158,32 +137,13 @@ const AddRestaurant = () => {
     const payload = {
       user: loggedInUser,
       name,
-      images,
       phoneNumbers: phoneNumbers.map((p) => p.value),
       avgPrice,
       cuisines,
-      location: {
-        areaName,
-        fullAddress,
-        gmapLink: location,
-      },
-      dineInDetails: {
-        enabled: dineIn,
-        timings: restaurantTimings,
-        freeDeliveryDistance,
-      },
-      takeAwayDetails: takeaway
-        ? {
-            enabled: takeaway,
-            timings: takeawayTimings,
-          }
-        : null,
-      deliveryDetails: delivery
-        ? {
-            enabled: delivery,
-            timings: deliveryTimings,
-          }
-        : null,
+      location: resLocation,
+      dineInDetails,
+      takeawayDetails,
+      deliveryDetails,
     };
 
     /**
@@ -218,20 +178,33 @@ const AddRestaurant = () => {
           isRequired
           label="Restaurant Name"
           name="name"
-          defaultValue={editedRestaurant.name}
+          value={name}
+          onChange={(value: any) => setName(value)}
         />
         <TextInput
           isRequired
           label="Restaurant Location"
           name="location"
           placeholder="Paste map link here"
-          defaultValue={editedRestaurant.location?.gmapLink}
+          value={resLocation?.gmapLink}
+          onChange={(value: any) =>
+            setResLocation({
+              ...resLocation,
+              gmapLink: value,
+            })
+          }
         />
         <TextInput
           isRequired
           label="Restaurant Full Address"
           name="fullAddress"
-          defaultValue={editedRestaurant.location?.fullAddress}
+          value={resLocation?.fullAddress}
+          onChange={(value: any) =>
+            setResLocation({
+              ...resLocation,
+              fullAddress: value,
+            })
+          }
         />
         <Select
           isRequired
@@ -249,71 +222,92 @@ const AddRestaurant = () => {
           label="Restaurant Area"
           name="areaName"
           list={Object.values(AREA_TYPES)}
-          value={areaName}
-          onChange={(value: any) => setAreaName(value)}
+          value={resLocation?.areaName}
+          onChange={(value: any) =>
+            setResLocation({
+              ...resLocation,
+              areaName: value,
+            })
+          }
           validationError={validationErrors.area}
         />
         <TextInput
           label="Average Price For One"
           name="avgPrice"
           inputType={InputTypes.NUMBER}
-          defaultValue={editedRestaurant.avgPrice}
+          value={avgPriceForOne}
+          onChange={(value: any) => setAvgPriceForOne(value)}
         />
 
         <Section text="Manager/Owner Details" />
+
         <PhoneNumbers phoneNumbers={phoneNumbers} onChange={setPhoneNumbers} />
         <Checkbox
           label="Is managed by owner?"
           name="isManagedByOwner"
-          defaultValue={editedRestaurant.isManagedByOwner}
+          value={isManagedByOwner}
+          onChange={(value: any) => setIsManagedByOwner(value)}
         />
 
         <Section text="Timings and Facilities" />
+
         {/* Dine In */}
         <Checkbox
           label="Dine In"
           name="dineIn"
-          value={dineIn.toString()}
-          onChange={(value) => setDineIn(value)}
+          value={dineInDetails.enabled}
+          onChange={(value) =>
+            setDineInDetails({
+              ...dineInDetails,
+              enabled: value,
+            })
+          }
         />
         <Timings
-          time={restaurantTimings}
-          onChange={setRestaurantTimings}
+          time={dineInDetails.timings}
+          onChange={(value: any) =>
+            setDineInDetails({ ...dineInDetails, timings: value })
+          }
           name="restaurantTimings"
           title="Restaurant Timings"
-          shouldShow={dineIn}
+          shouldShow={dineInDetails.enabled}
         />
 
         {/* Delivery */}
         <Checkbox
           label="Delivery"
           name="delivery"
-          value={delivery.toString()}
-          onChange={(value) => setDelivery(value)}
+          value={deliveryDetails.enabled}
+          onChange={(value) =>
+            setDeliveryDetails({
+              ...deliveryDetails,
+              enabled: value,
+            })
+          }
         />
         <Timings
-          time={deliveryTimings}
-          onChange={setDeliveryTimings}
+          time={deliveryDetails.timings}
+          onChange={(value: any) =>
+            setDeliveryDetails({ ...deliveryDetails, timings: value })
+          }
           name="deliveryTimings"
           title="Delivery Timings"
-          shouldShow={delivery}
+          shouldShow={deliveryDetails.enabled}
         />
-        {delivery ? (
+        {deliveryDetails.enabled ? (
           <>
             <TextInput
               label="Free Delivery Distance"
               name="freeDeliveryDistance"
               placeholder="Distance in kms"
               inputType={InputTypes.NUMBER}
-              defaultValue={
-                editedRestaurant.deliveryDetails?.freeDeliveryDistance
-              }
+              value={deliveryDetails?.freeDeliveryDistance}
             />
             <TextInput
               label="Delivery Fee Post Free Distance"
               name="deliveryFee"
               inputType={InputTypes.NUMBER}
-              defaultValue={editedRestaurant.deliveryFee || 0}
+              value={deliveryDetails.deliveryFee}
             />
           </>
         ) : (
@@ -324,15 +318,22 @@ const AddRestaurant = () => {
         <Checkbox
           label="Takeway"
           name="takeaway"
-          value={takeaway.toString()}
-          onChange={(value) => setTakeaway(value)}
+          value={takeawayDetails.enabled}
+          onChange={(value) =>
+            setTakeawayDetails({
+              ...takeawayDetails,
+              enabled: value,
+            })
+          }
         />
         <Timings
-          time={takeawayTimings}
-          onChange={setTakeawayTimings}
+          time={takeawayDetails.timings}
+          onChange={(value: any) =>
+            setTakeawayDetails({ ...takeawayDetails, timings: value })
+          }
           name="takeawayTimings"
           title="Takeaway Timings"
-          shouldShow={takeaway}
+          shouldShow={takeawayDetails.enabled}
         />
 
         <Button type="submit">

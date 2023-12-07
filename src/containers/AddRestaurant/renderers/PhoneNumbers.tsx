@@ -51,7 +51,7 @@ const PhoneNumbers = ({ phoneNumbers, onChange }: any) => {
             isRequired={index < MAX_RESTAURANT_PHONE_COUNT / 2}
             label={`Phone Number ${index + 1}`}
             name={`phone_${index + 1}`}
-            defaultValue={phoneNumber.value}
+            value={phoneNumber.value}
             inputType={InputTypes.MOBILE}
             onChange={(value, isValid) =>
               onPhoneNumberChange(value, !isValid, index)

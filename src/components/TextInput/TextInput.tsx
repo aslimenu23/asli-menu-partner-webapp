@@ -7,13 +7,13 @@ const TextInput = ({
   inputType,
   label,
   name,
-  defaultValue,
+  value: propValue,
   placeholder = "",
   onChange: onChangeProp,
   isRequired,
   noMargin,
 }: InputProps) => {
-  const [value, setValue] = useState(defaultValue);
+  const [value, setValue] = useState(propValue);
   const [error, setError] = useState(false);
 
   const onChange = (event: any) => {

@@ -4,18 +4,17 @@ import { CheckboxWrapper } from "./Checkbox.styles";
 const Checkbox = ({
   label,
   name,
-  defaultValue,
+  value: propValue,
   onChange,
   isRequired,
 }: {
   name: string;
   label?: string;
-  defaultValue?: string;
-  value?: string;
+  value?: boolean;
   onChange?: (value: boolean) => void;
   isRequired?: boolean;
 }) => {
-  const [value, setValue] = useState(defaultValue || "false");
+  const [value, setValue] = useState(!!propValue);
 
   const onCheckChange = (event: any) => {
     setValue(event.target.checked);
@@ -28,7 +27,7 @@ const Checkbox = ({
         required={isRequired}
         name={name}
         type="checkbox"
-        value={value}
+        checked={!!value}
         onChange={onCheckChange}
       />
       <label htmlFor={name}>{label}</label>

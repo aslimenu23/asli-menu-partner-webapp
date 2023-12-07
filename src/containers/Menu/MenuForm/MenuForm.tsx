@@ -98,14 +98,9 @@ const MenuForm = ({
         <TextInput
           name="description"
           label="Item Description"
-          defaultValue={item?.description}
+          value={item?.description}
         />
-        <TextInput
-          isRequired
-          name="price"
-          label="Price"
-          defaultValue={item?.price}
-        />
+        <TextInput isRequired name="price" label="Price" value={item?.price} />
         <Select
           isRequired
           list={Object.values(DISH_TYPES)}
@@ -118,7 +113,7 @@ const MenuForm = ({
         <Checkbox
           name="isBestSeller"
           label="Is Best Seller?"
-          defaultValue={item?.isBestSeller}
+          value={item?.isBestSeller}
         />
         <FormFooter>
           <Button onClick={onCancel} type="button">

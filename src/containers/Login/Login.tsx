@@ -157,7 +157,7 @@ const Login = () => {
         <TextInput
           label="Phone number"
           name="phone"
-          defaultValue={phone.value}
+          value={phone.value}
           inputType={InputTypes.MOBILE}
           onChange={(value, isValid) => setPhone({ value, isValid: !!isValid })}
         />
@@ -184,7 +184,7 @@ const Login = () => {
         <TextInput
           label="Enter OTP"
           name="otp"
-          defaultValue={otp.value}
+          value={otp.value}
           inputType={InputTypes.OTP}
           onChange={(value, isValid) => setOtp({ value, isValid: !!isValid })}
         />
@@ -212,7 +212,7 @@ const Login = () => {
         <TextInput
           label="Enter your name"
           name="userName"
-          defaultValue={name.value}
+          value={name.value}
           onChange={(value, isValid) => setName({ value, isValid: !!isValid })}
         />
         <Button

@@ -3,7 +3,7 @@ export type InputProps = {
   onChange?: (value: any, isValid?: boolean) => void;
   label?: string;
   inputType?: InputTypes;
-  defaultValue?: any;
+  value?: any;
   placeholder?: string;
   isRequired?: boolean;
   noMargin?: boolean;
