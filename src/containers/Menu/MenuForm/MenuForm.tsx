@@ -4,8 +4,9 @@ import Select from "../../../components/Select/Select";
 import Checkbox from "../../../components/Checkbox/Checkbox";
 import Button from "../../../components/Button/Button";
 import { FormFooter, MenuFormWrapper } from "./MenuForm.styles";
-import { useCommonStates } from "../../../store/commonStore";
+import { useCommonActions, useCommonStates } from "../../../store/commonStore";
 import { CATEGORY, DISH_TYPES } from "./MenuForm.types";
+import { getPayload } from "./MenuForm.helpers";
 
 const MenuForm = ({
   item,
@@ -16,6 +17,9 @@ const MenuForm = ({
   onChange: (item: any) => void;
   onCancel: () => void;
 }) => {
+  const setSnackbarMessage = useCommonActions().setSnackbarMessage;
+  const resChoices = useCommonStates().resChoices;
+
   const [category, setCategory] = useState(item?.category);
   const [name, setName] = useState(item?.name);
   const [dishType, setDishType] = useState(item?.dishType);
@@ -27,11 +31,6 @@ const MenuForm = ({
     error: "",
   });
   const [price, setPrice] = useState({ value: item?.price, error: "" });
-
-  const [validationErrors, setValidationErrors] = useState<any>({});
-
-  const resChoices = useCommonStates().resChoices;
-
   const [categoryList, setCategoryList] = useState<any[]>([
     ...Object.values(CATEGORY),
     ...(resChoices?.dishCategories || []),
@@ -51,18 +50,13 @@ const MenuForm = ({
       price,
     };
 
-    // const validations = performCustomValidations(menuItem, [
-    //   "category",
-    //   "name",
-    //   "dishType",
-    // ]);
+    const { error, payload } = getPayload(menuItem);
+    if (error) {
+      setSnackbarMessage(error);
+      return;
+    }
 
-    // if (!validations.isValid) {
-    //   setValidationErrors(validations.errors);
-    //   return;
-    // }
-
-    onChange(menuItem);
+    onChange(payload);
   };
 
   const onCategoryChange = (value: any) => {
@@ -81,7 +75,7 @@ const MenuForm = ({
 
   return (
     <MenuFormWrapper>
-      <form onSubmit={onSubmit}>
+      <form onSubmit={onSubmit} noValidate>
         <Select
           isCreatable
           isRequired
@@ -90,7 +84,6 @@ const MenuForm = ({
           label="Category"
           value={category}
           onChange={onCategoryChange}
-          validationError={validationErrors.category}
         />
         <Select
           isCreatable
@@ -100,7 +93,6 @@ const MenuForm = ({
           label="Item Name"
           value={name}
           onChange={onNameChange}
-          validationError={validationErrors.name}
         />
         <TextInput
           name="description"
@@ -126,7 +118,6 @@ const MenuForm = ({
           label="Type"
           value={dishType}
           onChange={(value: any) => setDishType(value)}
-          validationError={validationErrors.dishType}
         />
         <Checkbox
           name="isBestSeller"

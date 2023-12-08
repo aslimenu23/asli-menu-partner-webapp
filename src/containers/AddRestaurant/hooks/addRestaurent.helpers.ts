@@ -25,6 +25,7 @@ export const getPayload = (states: any) => {
     if (Array.isArray(field)) {
       return field.length === 0;
     }
+    return false;
   });
   if (isAnyRequiredStringFieldEmpty || isAnyRequiredSelectFieldEmpty) {
     return {
