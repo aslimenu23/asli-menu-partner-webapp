@@ -1,20 +1,17 @@
-import React, { useState } from "react";
+import React from "react";
 import { AddRestaurantWrapper } from "./AddRestaurant.styles";
 import TextInput from "../../components/TextInput/TextInput";
-import {
-  DEFAULT_TIME,
-  FIELD_NAMES_FOR_CUSTOM_VALIDATION,
-} from "./AddRestaurant.constants";
+import { FIELD_NAMES_FOR_CUSTOM_VALIDATION } from "./AddRestaurant.constants";
 import Checkbox from "../../components/Checkbox/Checkbox";
 import { InputTypes } from "../../components/TextInput/TextInput.types";
 import Button from "../../components/Button/Button";
 import { ROUTES } from "../../common/constants";
 import { useLocation, useNavigate } from "react-router-dom";
-import { AREA_TYPES, Timing } from "./AddRestaurant.types";
+import { AREA_TYPES } from "./AddRestaurant.types";
 import { addRestaurant, saveRestaurantDetails } from "../../actions/actions";
 import { useUserStates } from "../../store/userStore";
 import Section from "../../components/Section/Section";
-import { useCommonActions, useCommonStates } from "../../store/commonStore";
+import { useCommonActions } from "../../store/commonStore";
 import {
   convertToCapitalCase,
   performCustomValidations,
@@ -30,7 +27,6 @@ const AddRestaurant = () => {
   const location = useLocation();
 
   const loggedInUser = useUserStates().loggedInUser;
-  const resChoices = useCommonStates().resChoices;
   const setSnackbarMessage = useCommonActions().setSnackbarMessage;
 
   const editedRestaurant = location.state?.restaurant?.editValue || {};
@@ -71,7 +67,7 @@ const AddRestaurant = () => {
 
   const addNewItemToCuisines = (values: any) => {
     const latestItem = values[values.length - 1];
-    if (latestItem.__isNew__) {
+    if (latestItem?.__isNew__) {
       setCuisinesList([
         ...cuisinesList,
         {
@@ -88,9 +84,6 @@ const AddRestaurant = () => {
     setLoading(true);
     const formData = new FormData(event.target);
     const formDataObject = Object.fromEntries(formData.entries());
-
-    const { name, location, fullAddress, freeDeliveryDistance, avgPrice } =
-      formDataObject;
 
     const fieldsForValidation = {
       ...formDataObject,
@@ -135,15 +128,18 @@ const AddRestaurant = () => {
     }
 
     const payload = {
-      user: loggedInUser,
       name,
-      phoneNumbers: phoneNumbers.map((p) => p.value),
-      avgPrice,
       cuisines,
-      location: resLocation,
       dineInDetails,
       takeawayDetails,
       deliveryDetails,
+      user: loggedInUser,
+      location: resLocation,
+      avgPrice: avgPriceForOne,
+      phoneNumbers: phoneNumbers.map((p) => p.value),
+      metadata: {
+        isManagedByOwner,
+      },
     };
 
     /**
