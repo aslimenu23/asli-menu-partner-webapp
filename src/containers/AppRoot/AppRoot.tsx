@@ -27,6 +27,10 @@ const AppRoot = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
+  useEffect(() => {
     const auth = getAuth(firebase);
     onAuthStateChanged(auth, async (user: any) => {
       // If user is logged in and lands on login page, redirect to home page
@@ -50,6 +54,7 @@ const AppRoot = () => {
           });
         }
       }
+
       setLoading(false);
     });
 
