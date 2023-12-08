@@ -1,11 +1,9 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useCommonActions, useCommonStates } from "../../../store/commonStore";
-import { DEFAULT_TIME } from "../AddRestaurant.constants";
 import { useUserStates } from "../../../store/userStore";
 import { ROUTES } from "../../../common/constants";
 import { addRestaurant, saveRestaurantDetails } from "../../../actions/actions";
-import { convertToCapitalCase } from "../../../common/utils";
 import { getPayload } from "./addRestaurent.helpers";
 
 const useAddRestaurantStates = () => {
@@ -14,16 +12,14 @@ const useAddRestaurantStates = () => {
   const navigate = useNavigate();
 
   const loggedInUser = useUserStates().loggedInUser;
-  const setSnackbarMessage = useCommonActions().setSnackbarMessage;
+  const { setSnackbarMessage, setCuisines: setCuisinesList } =
+    useCommonActions();
 
   const editedRestaurant = location.state?.restaurant?.editValue || {};
   const editedRestaurantId = location.state?.restaurant?.id || "";
 
   // Page level states
   const [loading, setLoading] = useState(false);
-  const [cuisinesList, setCuisinesList] = useState<any[]>(
-    resChoices?.cuisines || []
-  );
   const [validationErrors, setValidationErrors] = useState<any>({});
 
   // Basic details
@@ -93,15 +89,9 @@ const useAddRestaurantStates = () => {
   const addNewItemToCuisines = (values: any) => {
     const latestItem = values[values.length - 1];
     if (latestItem?.__isNew__) {
-      setCuisinesList([
-        ...cuisinesList,
-        {
-          label: convertToCapitalCase(latestItem.label),
-          value: latestItem.value.toUpperCase(),
-        },
-      ]);
+      setCuisinesList([...(resChoices?.cuisines || []), latestItem.value]);
     }
-    setCuisines(values);
+    setCuisines(values.map((c: any) => c.value));
   };
 
   const onSubmit = async (event: any) => {
@@ -167,7 +157,6 @@ const useAddRestaurantStates = () => {
       dineInDetails,
       takeawayDetails,
       deliveryDetails,
-      cuisinesList,
       validationErrors,
       loading,
       gmapLink,
@@ -175,6 +164,7 @@ const useAddRestaurantStates = () => {
       areaName,
       freeDeliveryDistance,
       deliveryFee,
+      cuisinesList: resChoices?.cuisines || [],
     },
     actions: {
       setDeliveryFee,

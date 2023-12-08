@@ -33,11 +33,10 @@ const CustomSelect = ({
       setLocalState(
         getSelectableList(selectValues.map((item: any) => item.value))
       );
-      onChange(selectValues.map((item: any) => item.value));
     } else {
       setLocalState(getSelectableList([selectValues.value]));
-      onChange(selectValues.value);
     }
+    onChange(selectValues);
   };
 
   const options = getSelectableList(Array.from(new Set(list)));

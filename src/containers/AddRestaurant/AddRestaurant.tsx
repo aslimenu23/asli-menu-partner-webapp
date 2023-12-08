@@ -64,6 +64,17 @@ const AddRestaurant = () => {
           error={name.error}
           onChange={(value: any, error) => setName({ value, error })}
         />
+        <Select
+          isRequired
+          isMulti
+          isCreatable
+          label="Restaurant Cuisine"
+          name="cuisines"
+          list={cuisinesList}
+          value={cuisines}
+          onChange={addNewItemToCuisines}
+          validationError={validationErrors.cuisines}
+        />
         <TextInput
           isRequired
           label="Restaurant Location"
@@ -83,22 +94,11 @@ const AddRestaurant = () => {
         />
         <Select
           isRequired
-          isMulti
-          isCreatable
-          label="Restaurant Cuisine"
-          name="cuisines"
-          list={cuisinesList}
-          value={cuisines}
-          onChange={addNewItemToCuisines}
-          validationError={validationErrors.cuisines}
-        />
-        <Select
-          isRequired
           label="Restaurant Area"
           name="areaName"
           list={Object.values(AREA_TYPES)}
           value={areaName}
-          onChange={(value: any) => setAreaName(value)}
+          onChange={(value: any) => setAreaName(value.value)}
           validationError={validationErrors.area}
         />
         <TextInput

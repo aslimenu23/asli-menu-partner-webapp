@@ -5,7 +5,7 @@ import Checkbox from "../../../components/Checkbox/Checkbox";
 import Button from "../../../components/Button/Button";
 import { FormFooter, MenuFormWrapper } from "./MenuForm.styles";
 import { useCommonActions, useCommonStates } from "../../../store/commonStore";
-import { CATEGORY, DISH_TYPES } from "./MenuForm.types";
+import { DISH_TYPES } from "./MenuForm.types";
 import { getPayload } from "./MenuForm.helpers";
 
 const MenuForm = ({
@@ -17,8 +17,12 @@ const MenuForm = ({
   onChange: (item: any) => void;
   onCancel: () => void;
 }) => {
-  const setSnackbarMessage = useCommonActions().setSnackbarMessage;
+  const { setSnackbarMessage, setCategoryList, setDishNameList } =
+    useCommonActions();
   const resChoices = useCommonStates().resChoices;
+
+  const dishCategories = resChoices?.dishCategories || [];
+  const dishNames = resChoices?.dishNames || [];
 
   const [category, setCategory] = useState(item?.category);
   const [name, setName] = useState(item?.name);
@@ -31,13 +35,6 @@ const MenuForm = ({
     error: "",
   });
   const [price, setPrice] = useState({ value: item?.price, error: "" });
-  const [categoryList, setCategoryList] = useState<any[]>([
-    ...Object.values(CATEGORY),
-    ...(resChoices?.dishCategories || []),
-  ]);
-  const [dishNames, setDishNames] = useState<any[]>(
-    resChoices?.dishNames || []
-  );
 
   const onSubmit = (event: any) => {
     event.preventDefault();
@@ -60,16 +57,16 @@ const MenuForm = ({
   };
 
   const onCategoryChange = (value: any) => {
-    setCategory(value);
+    setCategory(value.value);
     if (value.__isNew__) {
-      setCategoryList([...categoryList, ...value.value]);
+      setCategoryList([...dishCategories, value.value]);
     }
   };
 
   const onNameChange = (value: any) => {
-    setName(value);
+    setName(value.value);
     if (value.__isNew__) {
-      setDishNames([...dishNames, ...value.value]);
+      setDishNameList([...dishNames, value.value]);
     }
   };
 
@@ -79,7 +76,7 @@ const MenuForm = ({
         <Select
           isCreatable
           isRequired
-          list={categoryList}
+          list={dishCategories}
           name="category"
           label="Category"
           value={category}
@@ -117,7 +114,7 @@ const MenuForm = ({
           name="dishType"
           label="Type"
           value={dishType}
-          onChange={(value: any) => setDishType(value)}
+          onChange={(value: any) => setDishType(value.value)}
         />
         <Checkbox
           name="isBestSeller"

@@ -80,9 +80,9 @@ export const getPayload = (states: any) => {
     payload: {
       name: name.value,
       cuisines,
-      dineInDetails,
-      deliveryDetails,
-      takeawayDetails,
+      dineInDetails: dineInDetails.enabled ? dineInDetails : null,
+      deliveryDetails: deliveryDetails.enabled ? deliveryDetails : null,
+      takeawayDetails: takeawayDetails.enabled ? takeawayDetails : null,
       location: {
         gmapLink: gmapLink.value,
         fullAddress: fullAddress.value,
