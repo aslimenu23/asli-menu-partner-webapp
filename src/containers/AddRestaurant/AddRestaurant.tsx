@@ -302,12 +302,24 @@ const AddRestaurant = () => {
               placeholder="Distance in kms"
               inputType={InputTypes.NUMBER}
               value={deliveryDetails?.freeDeliveryDistance}
+              onChange={(value: any) =>
+                setDeliveryDetails({
+                  ...deliveryDetails,
+                  freeDeliveryDistance: value,
+                })
+              }
             />
             <TextInput
               label="Delivery Fee Post Free Distance"
               name="deliveryFee"
               inputType={InputTypes.NUMBER}
               value={deliveryDetails.deliveryFee}
+              onChange={(value: any) =>
+                setDeliveryDetails({
+                  ...deliveryDetails,
+                  deliveryFee: value,
+                })
+              }
             />
           </>
         ) : (

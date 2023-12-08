@@ -15,6 +15,7 @@ export const AppHeaderWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  z-index: 100;
 
   .app-header__title {
     display: flex;

@@ -11,7 +11,7 @@ const Timings = ({ time, onChange, name, title, shouldShow }: any) => {
 
   useEffect(() => {
     setKeyUUID(uuid());
-  }, [time]);
+  }, []);
 
   const addTime = () => {
     onChange([
@@ -31,7 +31,6 @@ const Timings = ({ time, onChange, name, title, shouldShow }: any) => {
 
   const onTimeChange = (value: any, index: number, key: string) => {
     time[index][key] = value;
-    setKeyUUID(uuid());
     onChange([...time]);
   };
 
