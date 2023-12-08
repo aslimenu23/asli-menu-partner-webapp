@@ -6,16 +6,16 @@ export const checkIfValidInput = (value: any, inputType?: InputTypes) => {
       const mobilePattern =
         /^(1\s|1|)?((\(\d{3}\))|\d{3})(\-|\s)?(\d{3})(\-|\s)?(\d{4})$/;
       const isValidMobile = value.match(mobilePattern);
-      return isValidMobile;
+      return isValidMobile ? "" : `Invalud mobile number`;
     case InputTypes.OTP:
       const otpPattern = /^\d{6}$/;
       const isValidOtp = value.match(otpPattern);
-      return isValidOtp;
+      return isValidOtp ? "" : `Invalud OTP`;
     case InputTypes.NUMBER:
       const numberPattern = /^\d+$/;
       const isValidNumber = value.match(numberPattern);
-      return isValidNumber;
+      return isValidNumber ? "" : `Invalud number`;
     default:
-      return true;
+      return "";
   }
 };

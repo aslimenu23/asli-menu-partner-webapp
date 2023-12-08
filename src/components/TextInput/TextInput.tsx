@@ -7,26 +7,21 @@ const TextInput = ({
   inputType,
   label,
   name,
-  value: propValue,
+  value,
   placeholder = "",
   onChange: onChangeProp,
   isRequired,
   noMargin,
+  error,
 }: InputProps) => {
-  const [value, setValue] = useState(propValue);
-  const [error, setError] = useState(false);
-
   const onChange = (event: any) => {
     const newValue = event.target.value;
-    const isValid = checkIfValidInput(newValue, inputType);
+    const error = checkIfValidInput(newValue, inputType);
 
-    setValue(newValue);
-    onChangeProp?.(newValue, isValid);
-
-    if (isValid) {
-      setError(false);
-    } else setError(true);
+    onChangeProp?.(newValue, error);
   };
+
+  const shouldShowError = isRequired ? error : error && value?.length;
 
   return (
     <StyledInputWrapper noMargin={noMargin}>
@@ -44,6 +39,13 @@ const TextInput = ({
         onChange={onChange}
         placeholder={placeholder}
       />
+      {shouldShowError ? (
+        <div style={{ marginBottom: "10px", color: "red", fontSize: 12 }}>
+          {error}
+        </div>
+      ) : (
+        <></>
+      )}
     </StyledInputWrapper>
   );
 };

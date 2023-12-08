@@ -23,8 +23,11 @@ const MenuForm = ({
   const [isBestSeller, setIsBestSeller] = useState<boolean>(
     !!item?.isBestSeller
   );
-  const [description, setDescription] = useState(item?.description);
-  const [price, setPrice] = useState(item?.price);
+  const [description, setDescription] = useState({
+    value: item?.description,
+    error: "",
+  });
+  const [price, setPrice] = useState({ value: item?.price, error: "" });
 
   const [validationErrors, setValidationErrors] = useState<any>({});
 
@@ -103,15 +106,19 @@ const MenuForm = ({
         <TextInput
           name="description"
           label="Item Description"
-          value={description}
-          onChange={(value: any) => setDescription(value)}
+          value={description.value}
+          error={description.error}
+          onChange={(value: any, error: string) =>
+            setDescription({ value, error })
+          }
         />
         <TextInput
           isRequired
           name="price"
           label="Price"
-          value={price}
-          onChange={(value) => setPrice(value)}
+          value={price.value}
+          error={price.error}
+          onChange={(value, error) => setPrice({ value, error })}
         />
         <Select
           isRequired

@@ -18,14 +18,26 @@ const useAddRestaurantStates = () => {
   const [validationErrors, setValidationErrors] = useState<any>({});
 
   // Basic details
-  const [name, setName] = useState(editedRestaurant.name || "");
-  const [resLocation, setResLocation] = useState(
-    editedRestaurant.location || {}
+  const [name, setName] = useState({
+    value: editedRestaurant.name || "",
+    error: "",
+  });
+  const [gmapLink, setGmapLink] = useState({
+    value: editedRestaurant.location?.gmapLink || "",
+    error: "",
+  });
+  const [fullAddress, setFullAddress] = useState({
+    value: editedRestaurant.location?.fullAddress || "",
+    error: "",
+  });
+  const [areaName, setAreaName] = useState(
+    editedRestaurant.location?.areaName || ""
   );
   const [cuisines, setCuisines] = useState<any[]>(editedRestaurant.cuisines);
-  const [avgPriceForOne, setAvgPriceForOne] = useState(
-    editedRestaurant.avgPrice
-  );
+  const [avgPriceForOne, setAvgPriceForOne] = useState({
+    value: editedRestaurant.avgPrice,
+    error: "",
+  });
 
   // Manager/Owner details
   const [phoneNumbers, setPhoneNumbers] = useState<any[]>(
@@ -53,6 +65,15 @@ const useAddRestaurantStates = () => {
       timings: [DEFAULT_TIME],
     }
   );
+
+  const [freeDeliveryDistance, setFreeDeliveryDistance] = useState({
+    value: editedRestaurant.deliveryDetails?.freeDeliveryDistance || 0,
+    error: "",
+  });
+  const [deliveryFee, setDeliveryFee] = useState({
+    value: editedRestaurant.deliveryDetails?.deliveryFee || 0,
+    error: "",
+  });
   const [deliveryDetails, setDeliveryDetails] = useState(
     editedRestaurant.deliveryDetails || {
       enabled: false,
@@ -63,7 +84,6 @@ const useAddRestaurantStates = () => {
   return {
     states: {
       name,
-      resLocation,
       cuisines,
       avgPriceForOne,
       phoneNumbers,
@@ -74,10 +94,19 @@ const useAddRestaurantStates = () => {
       cuisinesList,
       validationErrors,
       loading,
+      gmapLink,
+      fullAddress,
+      areaName,
+      freeDeliveryDistance,
+      deliveryFee,
     },
     actions: {
+      setDeliveryFee,
+      setFreeDeliveryDistance,
+      setAreaName,
+      setFullAddress,
       setName,
-      setResLocation,
+      setGmapLink,
       setCuisines,
       setAvgPriceForOne,
       setPhoneNumbers,

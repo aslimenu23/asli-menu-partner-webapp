@@ -1,12 +1,14 @@
 export type InputProps = {
   name: string;
-  onChange?: (value: any, isValid?: boolean) => void;
+  value: any;
+  onChange: (value: any, error: string) => void;
   label?: string;
+
   inputType?: InputTypes;
-  value?: any;
   placeholder?: string;
   isRequired?: boolean;
   noMargin?: boolean;
+  error?: string;
 };
 
 export enum InputTypes {

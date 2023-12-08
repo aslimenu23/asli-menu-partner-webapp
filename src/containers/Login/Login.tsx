@@ -30,17 +30,17 @@ const Login = () => {
 
   const [phone, setPhone] = useState({
     value: "",
-    isValid: false,
+    error: "",
   });
   const [name, setName] = useState({
     value: "",
-    isValid: false,
+    error: "",
   });
   const [newUser, setNewUser] = useState(false);
   const [enableOTP, setEnableOTP] = useState(false);
   const [otp, setOtp] = useState({
     value: "",
-    isValid: false,
+    error: "",
   });
 
   const confirmationResultRef = useRef<any>();
@@ -158,13 +158,14 @@ const Login = () => {
           label="Phone number"
           name="phone"
           value={phone.value}
+          error={phone.error}
           inputType={InputTypes.MOBILE}
-          onChange={(value, isValid) => setPhone({ value, isValid: !!isValid })}
+          onChange={(value, error) => setPhone({ value, error })}
         />
         {!(enableOTP || newUser) ? (
           <Button
             ref={getOtpButtonRef}
-            isDisabled={!phone.isValid}
+            isDisabled={phone.error.length > 0}
             onClick={sendOTP}
             isLoading={isButtonLoading}
           >
@@ -185,13 +186,14 @@ const Login = () => {
           label="Enter OTP"
           name="otp"
           value={otp.value}
+          error={otp.error}
           inputType={InputTypes.OTP}
-          onChange={(value, isValid) => setOtp({ value, isValid: !!isValid })}
+          onChange={(value, error) => setOtp({ value, error })}
         />
         {!newUser ? (
           <Button
             onClick={onSubmitOtp}
-            isDisabled={!(phone.isValid && otp.isValid)}
+            isDisabled={phone.error.length > 0 || otp.error.length > 0}
             isLoading={isButtonLoading}
           >
             Submit
@@ -213,11 +215,16 @@ const Login = () => {
           label="Enter your name"
           name="userName"
           value={name.value}
-          onChange={(value, isValid) => setName({ value, isValid: !!isValid })}
+          error={name.error}
+          onChange={(value, error) => setName({ value, error })}
         />
         <Button
           onClick={signUpUser}
-          isDisabled={!(phone.isValid && otp.isValid && name.isValid)}
+          isDisabled={
+            phone.error.length > 0 ||
+            otp.error.length > 0 ||
+            name.error.length > 0
+          }
           isLoading={isButtonLoading}
         >
           Submit

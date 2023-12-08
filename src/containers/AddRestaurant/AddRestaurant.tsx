@@ -36,7 +36,7 @@ const AddRestaurant = () => {
     states: addRestaurantStates,
     actions: {
       setName,
-      setResLocation,
+      setGmapLink,
       setCuisines,
       setAvgPriceForOne,
       setPhoneNumbers,
@@ -47,12 +47,16 @@ const AddRestaurant = () => {
       setCuisinesList,
       setValidationErrors,
       setLoading,
+      setFullAddress,
+      setAreaName,
+      setFreeDeliveryDistance,
+      setDeliveryFee,
     },
   } = useAddRestaurantStates();
 
   const {
     name,
-    resLocation,
+    gmapLink,
     cuisines,
     avgPriceForOne,
     phoneNumbers,
@@ -63,6 +67,10 @@ const AddRestaurant = () => {
     cuisinesList,
     validationErrors,
     loading,
+    fullAddress,
+    areaName,
+    freeDeliveryDistance,
+    deliveryFee,
   } = addRestaurantStates;
 
   const addNewItemToCuisines = (values: any) => {
@@ -134,7 +142,11 @@ const AddRestaurant = () => {
       takeawayDetails,
       deliveryDetails,
       user: loggedInUser,
-      location: resLocation,
+      location: {
+        gmapLink,
+        fullAddress,
+        areaName,
+      },
       avgPrice: avgPriceForOne,
       phoneNumbers: phoneNumbers.map((p) => p.value),
       metadata: {
@@ -174,33 +186,26 @@ const AddRestaurant = () => {
           isRequired
           label="Restaurant Name"
           name="name"
-          value={name}
-          onChange={(value: any) => setName(value)}
+          value={name.value}
+          error={name.error}
+          onChange={(value: any, error) => setName({ value, error })}
         />
         <TextInput
           isRequired
           label="Restaurant Location"
-          name="location"
+          name="gmapLink"
           placeholder="Paste map link here"
-          value={resLocation?.gmapLink}
-          onChange={(value: any) =>
-            setResLocation({
-              ...resLocation,
-              gmapLink: value,
-            })
-          }
+          value={gmapLink.value}
+          error={gmapLink.error}
+          onChange={(value: any, error) => setGmapLink({ value, error })}
         />
         <TextInput
           isRequired
           label="Restaurant Full Address"
           name="fullAddress"
-          value={resLocation?.fullAddress}
-          onChange={(value: any) =>
-            setResLocation({
-              ...resLocation,
-              fullAddress: value,
-            })
-          }
+          value={fullAddress.value}
+          error={fullAddress.error}
+          onChange={(value: any, error) => setFullAddress({ value, error })}
         />
         <Select
           isRequired
@@ -218,21 +223,17 @@ const AddRestaurant = () => {
           label="Restaurant Area"
           name="areaName"
           list={Object.values(AREA_TYPES)}
-          value={resLocation?.areaName}
-          onChange={(value: any) =>
-            setResLocation({
-              ...resLocation,
-              areaName: value,
-            })
-          }
+          value={areaName}
+          onChange={(value: any) => setAreaName(value)}
           validationError={validationErrors.area}
         />
         <TextInput
           label="Average Price For One"
           name="avgPrice"
           inputType={InputTypes.NUMBER}
-          value={avgPriceForOne}
-          onChange={(value: any) => setAvgPriceForOne(value)}
+          value={avgPriceForOne.value}
+          error={avgPriceForOne.error}
+          onChange={(value: any, error) => setAvgPriceForOne({ value, error })}
         />
 
         <Section text="Manager/Owner Details" />
@@ -297,25 +298,19 @@ const AddRestaurant = () => {
               name="freeDeliveryDistance"
               placeholder="Distance in kms"
               inputType={InputTypes.NUMBER}
-              value={deliveryDetails?.freeDeliveryDistance}
-              onChange={(value: any) =>
-                setDeliveryDetails({
-                  ...deliveryDetails,
-                  freeDeliveryDistance: value,
-                })
+              value={freeDeliveryDistance.value}
+              error={freeDeliveryDistance.error}
+              onChange={(value: any, error) =>
+                setFreeDeliveryDistance({ value, error })
               }
             />
             <TextInput
               label="Delivery Fee Post Free Distance"
               name="deliveryFee"
               inputType={InputTypes.NUMBER}
-              value={deliveryDetails.deliveryFee}
-              onChange={(value: any) =>
-                setDeliveryDetails({
-                  ...deliveryDetails,
-                  deliveryFee: value,
-                })
-              }
+              value={deliveryFee.value}
+              error={deliveryFee.error}
+              onChange={(value: any, error) => setDeliveryFee({ value, error })}
             />
           </>
         ) : (
