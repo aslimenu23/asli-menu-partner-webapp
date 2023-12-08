@@ -108,13 +108,6 @@ const useAddRestaurantStates = () => {
     event.preventDefault();
 
     setLoading(true);
-    const formData = new FormData(event.target);
-    const formDataObject = Object.fromEntries(formData.entries());
-
-    const fieldsForValidation = {
-      ...formDataObject,
-      cuisines,
-    };
 
     const states = {
       name,

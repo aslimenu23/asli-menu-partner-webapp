@@ -88,7 +88,7 @@ export const getPayload = (states: any) => {
         fullAddress: fullAddress.value,
         areaName,
       },
-      avgPriceForOne: avgPriceForOne.value,
+      avgPrice: avgPriceForOne.value,
       phoneNumbers: phoneNumbers.map((p: any) => p.value),
       metadata: {
         isManagedByOwner,
