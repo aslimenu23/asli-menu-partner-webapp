@@ -30,6 +30,9 @@ const Timings = ({ time, onChange, name, title, shouldShow }: any) => {
   };
 
   const onTimeChange = (value: any, index: number, key: string) => {
+    if (!time[index]) {
+      time[index] = {};
+    }
     time[index][key] = value;
     onChange([...time]);
   };
@@ -42,17 +45,27 @@ const Timings = ({ time, onChange, name, title, shouldShow }: any) => {
           <TimePicker
             label="Start Time"
             name={`${name}_from_${index + 1}`}
-            value={moment(t?.startTime, "HH:mm")}
-            onChange={(value) =>
-              onTimeChange(value.format("HH:mm"), index, "startTime")
+            value={
+              t?.startTime
+                ? moment(t?.startTime, "HH:mm")
+                : moment("00:00", "HH:mm")
             }
+            onChange={(value) => {
+              onTimeChange(value.format("HH:mm"), index, "startTime");
+            }}
           />
-          <TimePicker
-            label="End Time"
-            name={`${name}_to_${index + 1}`}
-            value={moment(t?.endTime, "HH:mm")}
-            onChange={(value) => onTimeChange(value, index, "endTime")}
-          />
+          {t?.startTime && (
+            <TimePicker
+              label="Close Time"
+              name={`${name}_to_${index + 1}`}
+              value={
+                t?.endTime
+                  ? moment(t?.endTime, "HH:mm")
+                  : moment("00:00", "HH:mm")
+              }
+              onChange={(value) => onTimeChange(value, index, "endTime")}
+            />
+          )}
           <AddDeleteIcon
             index={index}
             list={time}

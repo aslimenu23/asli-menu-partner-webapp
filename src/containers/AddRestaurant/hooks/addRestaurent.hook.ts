@@ -1,14 +1,23 @@
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
-import { useCommonStates } from "../../../store/commonStore";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useCommonActions, useCommonStates } from "../../../store/commonStore";
 import { DEFAULT_TIME } from "../AddRestaurant.constants";
-import { Timing } from "../AddRestaurant.types";
+import { useUserStates } from "../../../store/userStore";
+import { ROUTES } from "../../../common/constants";
+import { addRestaurant, saveRestaurantDetails } from "../../../actions/actions";
+import { convertToCapitalCase } from "../../../common/utils";
+import { getPayload } from "./addRestaurent.helpers";
 
 const useAddRestaurantStates = () => {
   const location = useLocation();
   const resChoices = useCommonStates().resChoices;
+  const navigate = useNavigate();
+
+  const loggedInUser = useUserStates().loggedInUser;
+  const setSnackbarMessage = useCommonActions().setSnackbarMessage;
 
   const editedRestaurant = location.state?.restaurant?.editValue || {};
+  const editedRestaurantId = location.state?.restaurant?.id || "";
 
   // Page level states
   const [loading, setLoading] = useState(false);
@@ -46,7 +55,7 @@ const useAddRestaurantStates = () => {
           value: n,
           error: false,
         }))
-      : [{ value: "", error: false }]
+      : [{ value: "", error: true }]
   );
   const [isManagedByOwner, setIsManagedByOwner] = useState(
     editedRestaurant.isManagedByOwner
@@ -56,13 +65,13 @@ const useAddRestaurantStates = () => {
   const [dineInDetails, setDineInDetails] = useState(
     editedRestaurant.dineInDetails || {
       enabled: false,
-      timings: [DEFAULT_TIME],
+      timings: [null],
     }
   );
   const [takeawayDetails, setTakeawayDetails] = useState(
     editedRestaurant.takeAwayDetails || {
       enabled: false,
-      timings: [DEFAULT_TIME],
+      timings: [null],
     }
   );
 
@@ -77,9 +86,83 @@ const useAddRestaurantStates = () => {
   const [deliveryDetails, setDeliveryDetails] = useState(
     editedRestaurant.deliveryDetails || {
       enabled: false,
-      timings: [DEFAULT_TIME],
+      timings: [null],
     }
   );
+
+  const addNewItemToCuisines = (values: any) => {
+    const latestItem = values[values.length - 1];
+    if (latestItem?.__isNew__) {
+      setCuisinesList([
+        ...cuisinesList,
+        {
+          label: convertToCapitalCase(latestItem.label),
+          value: latestItem.value.toUpperCase(),
+        },
+      ]);
+    }
+    setCuisines(values);
+  };
+
+  const onSubmit = async (event: any) => {
+    event.preventDefault();
+
+    setLoading(true);
+    const formData = new FormData(event.target);
+    const formDataObject = Object.fromEntries(formData.entries());
+
+    const fieldsForValidation = {
+      ...formDataObject,
+      cuisines,
+    };
+
+    const states = {
+      name,
+      cuisines,
+      dineInDetails,
+      takeawayDetails,
+      deliveryDetails,
+      gmapLink,
+      fullAddress,
+      areaName,
+      avgPriceForOne,
+      phoneNumbers,
+      isManagedByOwner,
+    };
+
+    const { error, payload } = getPayload(states);
+    if (error) {
+      setSnackbarMessage(error);
+      setLoading(false);
+      return;
+    }
+
+    // @ts-ignore
+    payload.user = loggedInUser;
+
+    /**
+     * Add/Save restaurant details
+     */
+    let response = null;
+    if (editedRestaurant) {
+      response = await saveRestaurantDetails(payload, editedRestaurantId);
+    } else {
+      response = await addRestaurant(payload);
+    }
+
+    if (!response) {
+      setLoading(false);
+      throw new Error("Something went wrong");
+    }
+
+    if (editedRestaurant) {
+      // Edit flow
+      navigate(ROUTES.RESTAURANTS, { replace: true });
+    } else {
+      // Add flow
+      navigate(ROUTES.MENU, { replace: true });
+    }
+  };
 
   return {
     states: {
@@ -117,6 +200,8 @@ const useAddRestaurantStates = () => {
       setCuisinesList,
       setValidationErrors,
       setLoading,
+      onSubmit,
+      addNewItemToCuisines,
     },
   };
 };

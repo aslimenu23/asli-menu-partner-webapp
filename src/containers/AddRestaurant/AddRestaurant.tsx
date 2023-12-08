@@ -1,21 +1,11 @@
 import React from "react";
 import { AddRestaurantWrapper } from "./AddRestaurant.styles";
 import TextInput from "../../components/TextInput/TextInput";
-import { FIELD_NAMES_FOR_CUSTOM_VALIDATION } from "./AddRestaurant.constants";
 import Checkbox from "../../components/Checkbox/Checkbox";
 import { InputTypes } from "../../components/TextInput/TextInput.types";
 import Button from "../../components/Button/Button";
-import { ROUTES } from "../../common/constants";
-import { useLocation, useNavigate } from "react-router-dom";
 import { AREA_TYPES } from "./AddRestaurant.types";
-import { addRestaurant, saveRestaurantDetails } from "../../actions/actions";
-import { useUserStates } from "../../store/userStore";
 import Section from "../../components/Section/Section";
-import { useCommonActions } from "../../store/commonStore";
-import {
-  convertToCapitalCase,
-  performCustomValidations,
-} from "../../common/utils";
 import Select from "../../components/Select/Select";
 import Loader from "../../components/Loader/Loader";
 import PhoneNumbers from "./renderers/PhoneNumbers";
@@ -23,34 +13,23 @@ import Timings from "./renderers/Timings";
 import useAddRestaurantStates from "./hooks/addRestaurent.hook";
 
 const AddRestaurant = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const loggedInUser = useUserStates().loggedInUser;
-  const setSnackbarMessage = useCommonActions().setSnackbarMessage;
-
-  const editedRestaurant = location.state?.restaurant?.editValue || {};
-  const editedRestaurantId = location.state?.restaurant?.id || "";
-
   const {
     states: addRestaurantStates,
     actions: {
       setName,
       setGmapLink,
-      setCuisines,
       setAvgPriceForOne,
       setPhoneNumbers,
       setIsManagedByOwner,
       setDineInDetails,
       setTakeawayDetails,
       setDeliveryDetails,
-      setCuisinesList,
-      setValidationErrors,
-      setLoading,
       setFullAddress,
       setAreaName,
       setFreeDeliveryDistance,
       setDeliveryFee,
+      onSubmit,
+      addNewItemToCuisines,
     },
   } = useAddRestaurantStates();
 
@@ -73,114 +52,9 @@ const AddRestaurant = () => {
     deliveryFee,
   } = addRestaurantStates;
 
-  const addNewItemToCuisines = (values: any) => {
-    const latestItem = values[values.length - 1];
-    if (latestItem?.__isNew__) {
-      setCuisinesList([
-        ...cuisinesList,
-        {
-          label: convertToCapitalCase(latestItem.label),
-          value: latestItem.value.toUpperCase(),
-        },
-      ]);
-    }
-    setCuisines(values);
-  };
-
-  const onSubmit = async (event: any) => {
-    event.preventDefault();
-    setLoading(true);
-    const formData = new FormData(event.target);
-    const formDataObject = Object.fromEntries(formData.entries());
-
-    const fieldsForValidation = {
-      ...formDataObject,
-      cuisines,
-    };
-
-    // TODO: Move the error checking to a generic function
-
-    // Validations for custom select
-    const validationsPassed = performCustomValidations(
-      fieldsForValidation,
-      FIELD_NAMES_FOR_CUSTOM_VALIDATION
-    );
-
-    if (!validationsPassed.isValid) {
-      setValidationErrors(validationsPassed.errors);
-      setLoading(false);
-      return;
-    }
-
-    // Validation for facilities checkboxes
-    if (
-      !(
-        takeawayDetails.enabled ||
-        deliveryDetails.enabled ||
-        dineInDetails.enabled
-      )
-    ) {
-      setSnackbarMessage(
-        "Please select atleast one of the Facilities - Dine In, Delivery or TakeAway"
-      );
-      setLoading(false);
-      return;
-    }
-
-    // Validation for phone numbers
-    const anyPhoneNumbersHaveError = phoneNumbers.find((p) => p.error);
-    if (anyPhoneNumbersHaveError) {
-      setSnackbarMessage("Incorrect phone number");
-      setLoading(false);
-      return;
-    }
-
-    const payload = {
-      name,
-      cuisines,
-      dineInDetails,
-      takeawayDetails,
-      deliveryDetails,
-      user: loggedInUser,
-      location: {
-        gmapLink,
-        fullAddress,
-        areaName,
-      },
-      avgPrice: avgPriceForOne,
-      phoneNumbers: phoneNumbers.map((p) => p.value),
-      metadata: {
-        isManagedByOwner,
-      },
-    };
-
-    /**
-     * Add/Save restaurant details
-     */
-    let response = null;
-    if (editedRestaurant) {
-      response = await saveRestaurantDetails(payload, editedRestaurantId);
-    } else {
-      response = await addRestaurant(payload);
-    }
-
-    if (!response) {
-      setLoading(false);
-      throw new Error("Something went wrong");
-    }
-
-    if (editedRestaurant) {
-      // Edit flow
-      navigate(ROUTES.RESTAURANTS, { replace: true });
-    } else {
-      // Add flow
-      navigate(ROUTES.MENU, { replace: true });
-    }
-  };
-
   return (
     <AddRestaurantWrapper>
-      <form onSubmit={onSubmit}>
+      <form onSubmit={onSubmit} noValidate>
         <Section text="Basic Restaurant Details" removeMarginTop />
         <TextInput
           isRequired
@@ -228,6 +102,7 @@ const AddRestaurant = () => {
           validationError={validationErrors.area}
         />
         <TextInput
+          isRequired
           label="Average Price For One"
           name="avgPrice"
           inputType={InputTypes.NUMBER}
@@ -294,7 +169,7 @@ const AddRestaurant = () => {
         {deliveryDetails.enabled ? (
           <>
             <TextInput
-              label="Free Delivery Distance"
+              label="Free Delivery Distance (in Kms)"
               name="freeDeliveryDistance"
               placeholder="Distance in kms"
               inputType={InputTypes.NUMBER}

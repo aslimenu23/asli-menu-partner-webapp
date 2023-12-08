@@ -6,7 +6,6 @@ import Button from "../../../components/Button/Button";
 import { FormFooter, MenuFormWrapper } from "./MenuForm.styles";
 import { useCommonStates } from "../../../store/commonStore";
 import { CATEGORY, DISH_TYPES } from "./MenuForm.types";
-import { performCustomValidations } from "../../../common/utils";
 
 const MenuForm = ({
   item,
@@ -52,16 +51,16 @@ const MenuForm = ({
       price,
     };
 
-    const validations = performCustomValidations(menuItem, [
-      "category",
-      "name",
-      "dishType",
-    ]);
+    // const validations = performCustomValidations(menuItem, [
+    //   "category",
+    //   "name",
+    //   "dishType",
+    // ]);
 
-    if (!validations.isValid) {
-      setValidationErrors(validations.errors);
-      return;
-    }
+    // if (!validations.isValid) {
+    //   setValidationErrors(validations.errors);
+    //   return;
+    // }
 
     onChange(menuItem);
   };

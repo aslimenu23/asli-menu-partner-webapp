@@ -29,11 +29,7 @@ const PhoneNumbers = ({ phoneNumbers, onChange }: any) => {
     onChange([...phoneNumbers]);
   };
 
-  const onPhoneNumberChange = (
-    value: string,
-    error: boolean,
-    index: number
-  ) => {
+  const onPhoneNumberChange = (value: string, error: string, index: number) => {
     phoneNumbers[index] = {
       value,
       error,
@@ -53,8 +49,8 @@ const PhoneNumbers = ({ phoneNumbers, onChange }: any) => {
             name={`phone_${index + 1}`}
             value={phoneNumber.value}
             inputType={InputTypes.MOBILE}
-            onChange={(value, isValid) =>
-              onPhoneNumberChange(value, !isValid, index)
+            onChange={(value, error) =>
+              onPhoneNumberChange(value, error, index)
             }
           />
           <AddDeleteIcon
