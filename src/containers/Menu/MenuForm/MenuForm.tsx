@@ -20,6 +20,12 @@ const MenuForm = ({
   const [category, setCategory] = useState(item?.category);
   const [name, setName] = useState(item?.name);
   const [dishType, setDishType] = useState(item?.dishType);
+  const [isBestSeller, setIsBestSeller] = useState<boolean>(
+    !!item?.isBestSeller
+  );
+  const [description, setDescription] = useState(item?.description);
+  const [price, setPrice] = useState(item?.price);
+
   const [validationErrors, setValidationErrors] = useState<any>({});
 
   const resChoices = useCommonStates().resChoices;
@@ -34,14 +40,13 @@ const MenuForm = ({
 
   const onSubmit = (event: any) => {
     event.preventDefault();
-    const formData = new FormData(event.target);
-    const formDataObject = Object.fromEntries(formData.entries());
-
     const menuItem = {
-      ...formDataObject,
+      isBestSeller,
+      description,
       category,
       name,
       dishType,
+      price,
     };
 
     const validations = performCustomValidations(menuItem, [
@@ -98,9 +103,16 @@ const MenuForm = ({
         <TextInput
           name="description"
           label="Item Description"
-          value={item?.description}
+          value={description}
+          onChange={(value: any) => setDescription(value)}
         />
-        <TextInput isRequired name="price" label="Price" value={item?.price} />
+        <TextInput
+          isRequired
+          name="price"
+          label="Price"
+          value={price}
+          onChange={(value) => setPrice(value)}
+        />
         <Select
           isRequired
           list={Object.values(DISH_TYPES)}
@@ -113,7 +125,8 @@ const MenuForm = ({
         <Checkbox
           name="isBestSeller"
           label="Is Best Seller?"
-          value={item?.isBestSeller}
+          value={isBestSeller}
+          onChange={(value) => setIsBestSeller(value)}
         />
         <FormFooter>
           <Button onClick={onCancel} type="button">
