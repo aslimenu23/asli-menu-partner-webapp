@@ -41,12 +41,3 @@ export const getSelectableList: any = (values: string[]) => {
     value: value ? convertToCapitalCase(value) : "",
   }));
 };
-
-export const isStartTimingGreaterThanEndTiming = (
-  startTiming: string,
-  endTiming: string
-) => {
-  const startTime = moment(startTiming, "HH:mm");
-  const endTime = moment(endTiming, "HH:mm");
-  return startTime.isAfter(endTime);
-};

@@ -1,5 +1,3 @@
-import { isStartTimingGreaterThanEndTiming } from "../../../common/utils";
-
 export const getPayload = (states: any) => {
   const {
     name,
@@ -59,11 +57,6 @@ export const getPayload = (states: any) => {
       facility.timings.forEach((timing: any) => {
         if (!timing?.startTime || !timing?.endTime) {
           facilityError = "Please add start and end time for the facility";
-        } else if (
-          isStartTimingGreaterThanEndTiming(timing?.startTime, timing?.endTime)
-        ) {
-          facilityError =
-            "Start time should be less than end time for the facility";
         }
       });
     }
@@ -78,7 +71,7 @@ export const getPayload = (states: any) => {
   return {
     error: "",
     payload: {
-      cuisines,
+      cuisines: cuisines.map((c: any) => c.value),
       metadata: {
         isManagedByOwner,
       },

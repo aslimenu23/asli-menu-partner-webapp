@@ -54,18 +54,16 @@ const Timings = ({ time, onChange, name, title, shouldShow }: any) => {
               onTimeChange(value.format("HH:mm"), index, "startTime");
             }}
           />
-          {t?.startTime && (
-            <TimePicker
-              label="Close Time"
-              name={`${name}_to_${index + 1}`}
-              value={
-                t?.endTime
-                  ? moment(t?.endTime, "HH:mm")
-                  : moment("00:00", "HH:mm")
-              }
-              onChange={(value) => onTimeChange(value, index, "endTime")}
-            />
-          )}
+          <TimePicker
+            label="Close Time"
+            name={`${name}_to_${index + 1}`}
+            value={
+              t?.endTime
+                ? moment(t?.endTime, "HH:mm")
+                : moment("00:00", "HH:mm")
+            }
+            onChange={(value) => onTimeChange(value, index, "endTime")}
+          />
           <AddDeleteIcon
             index={index}
             list={time}

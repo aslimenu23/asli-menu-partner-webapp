@@ -27,7 +27,6 @@ const AddRestaurant = () => {
       setFullAddress,
       setAreaName,
       setFreeDeliveryDistance,
-      setDeliveryFee,
       onSubmit,
       addNewItemToCuisines,
     },
@@ -49,7 +48,6 @@ const AddRestaurant = () => {
     fullAddress,
     areaName,
     freeDeliveryDistance,
-    deliveryFee,
   } = addRestaurantStates;
 
   return (
@@ -167,27 +165,17 @@ const AddRestaurant = () => {
           shouldShow={deliveryDetails.enabled}
         />
         {deliveryDetails.enabled ? (
-          <>
-            <TextInput
-              label="Free Delivery Distance (in Kms)"
-              name="freeDeliveryDistance"
-              placeholder="Distance in kms"
-              inputType={InputTypes.NUMBER}
-              value={freeDeliveryDistance.value}
-              error={freeDeliveryDistance.error}
-              onChange={(value: any, error) =>
-                setFreeDeliveryDistance({ value, error })
-              }
-            />
-            <TextInput
-              label="Delivery Fee Post Free Distance"
-              name="deliveryFee"
-              inputType={InputTypes.NUMBER}
-              value={deliveryFee.value}
-              error={deliveryFee.error}
-              onChange={(value: any, error) => setDeliveryFee({ value, error })}
-            />
-          </>
+          <TextInput
+            label="Free Delivery Distance (in Kms)"
+            name="freeDeliveryDistance"
+            placeholder="Distance in kms"
+            inputType={InputTypes.NUMBER}
+            value={freeDeliveryDistance.value}
+            error={freeDeliveryDistance.error}
+            onChange={(value: any, error) =>
+              setFreeDeliveryDistance({ value, error })
+            }
+          />
         ) : (
           <></>
         )}

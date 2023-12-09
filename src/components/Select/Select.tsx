@@ -27,9 +27,6 @@ const CustomSelect = ({
   isMulti?: boolean;
   validationError?: string;
 }) => {
-  console.log("12345", {
-    value,
-  });
   const [localState, setLocalState] = useState(value);
 
   const onSelectChange = (selectValues: any | any[]) => {

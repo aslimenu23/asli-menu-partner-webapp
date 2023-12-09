@@ -78,10 +78,6 @@ const useAddRestaurantStates = () => {
     value: editedRestaurant.deliveryDetails?.freeDeliveryDistance || 0,
     error: "",
   });
-  const [deliveryFee, setDeliveryFee] = useState({
-    value: editedRestaurant.deliveryDetails?.deliveryFee || 0,
-    error: "",
-  });
   const [deliveryDetails, setDeliveryDetails] = useState(
     editedRestaurant.deliveryDetails || {
       enabled: false,
@@ -94,7 +90,7 @@ const useAddRestaurantStates = () => {
     if (latestItem?.__isNew__) {
       setCuisinesList([...(resChoices?.cuisines || []), latestItem.value]);
     }
-    setCuisines(values.map((c: any) => c.value));
+    setCuisines(values);
   };
 
   const onSubmit = async (event: any) => {
@@ -166,11 +162,9 @@ const useAddRestaurantStates = () => {
       fullAddress,
       areaName,
       freeDeliveryDistance,
-      deliveryFee,
       cuisinesList: resChoices?.cuisines || [],
     },
     actions: {
-      setDeliveryFee,
       setFreeDeliveryDistance,
       setAreaName,
       setFullAddress,
