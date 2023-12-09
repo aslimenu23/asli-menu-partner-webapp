@@ -52,10 +52,11 @@ const CustomSelect = ({
       )}
       <SelectComponent
         name={name}
-        value={localState}
-        options={options}
-        onChange={onSelectChange}
         isMulti={isMulti}
+        options={options}
+        value={localState}
+        onChange={onSelectChange}
+        isSearchable={isCreatable}
         styles={{
           control: (baseStyles) => ({
             ...baseStyles,
