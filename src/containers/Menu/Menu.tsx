@@ -21,6 +21,7 @@ const Menu = () => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [buttonLoading, setButtonLoading] = useState(false);
+  const [showMenuSubmit, setShowMenuSubmit] = useState(false);
 
   const currentRestaurant = location.state?.restaurant;
 
@@ -32,11 +33,13 @@ const Menu = () => {
 
   const onAddItem = (item: any) => {
     setMenu([...menu, item]);
+    setShowMenuSubmit(true);
     toggleForm();
   };
 
   const onChange = (updatedMenu: any[]) => {
     setMenu(updatedMenu);
+    setShowMenuSubmit(true);
   };
 
   const toggleForm = () => {
@@ -81,7 +84,7 @@ const Menu = () => {
           ADD ITEM TO MENU
         </AddMenuButton>
       )}
-      {menu.length ? (
+      {showMenuSubmit ? (
         <SaveMenuCta>
           <Button isLoading={buttonLoading} onClick={saveMenu}>
             Save Menu

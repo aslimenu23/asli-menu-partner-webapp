@@ -78,21 +78,21 @@ export const getPayload = (states: any) => {
   return {
     error: "",
     payload: {
-      name: name.value,
       cuisines,
+      metadata: {
+        isManagedByOwner,
+      },
+      name: name.value,
       dineInDetails: dineInDetails.enabled ? dineInDetails : null,
       deliveryDetails: deliveryDetails.enabled ? deliveryDetails : null,
       takeawayDetails: takeawayDetails.enabled ? takeawayDetails : null,
       location: {
+        areaName,
         gmapLink: gmapLink.value,
         fullAddress: fullAddress.value,
-        areaName,
       },
       avgPrice: avgPriceForOne.value,
       phoneNumbers: phoneNumbers.map((p: any) => p.value),
-      metadata: {
-        isManagedByOwner,
-      },
     },
   };
 };

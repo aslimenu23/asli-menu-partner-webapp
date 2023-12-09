@@ -5,6 +5,7 @@ import { useUserStates } from "../../../store/userStore";
 import { ROUTES } from "../../../common/constants";
 import { addRestaurant, saveRestaurantDetails } from "../../../actions/actions";
 import { getPayload } from "./addRestaurent.helpers";
+import { getSelectableList } from "../../../common/utils";
 
 const useAddRestaurantStates = () => {
   const location = useLocation();
@@ -36,9 +37,11 @@ const useAddRestaurantStates = () => {
     error: "",
   });
   const [areaName, setAreaName] = useState(
-    editedRestaurant.location?.areaName || ""
+    getSelectableList([editedRestaurant.location?.areaName || ""])
   );
-  const [cuisines, setCuisines] = useState<any[]>(editedRestaurant.cuisines);
+  const [cuisines, setCuisines] = useState<any[]>(
+    getSelectableList(editedRestaurant.cuisines || [])
+  );
   const [avgPriceForOne, setAvgPriceForOne] = useState({
     value: editedRestaurant.avgPrice,
     error: "",

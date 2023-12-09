@@ -15,31 +15,31 @@ const CustomSelect = ({
   isRequired,
 }: {
   name: string;
-  list: string[];
+  list: string[] | { value: string; label: string }[];
   label: string;
-  value: string | string[];
+  value:
+    | { value: string; label: string }
+    | { value: string; label: string }[]
+    | null;
   onChange: (value: string | string[]) => void;
   isRequired?: boolean;
   isCreatable?: boolean;
   isMulti?: boolean;
   validationError?: string;
 }) => {
-  const [localState, setLocalState] = useState(
-    getSelectableList(isMulti ? value : [value])
-  );
+  console.log("12345", {
+    value,
+  });
+  const [localState, setLocalState] = useState(value);
 
   const onSelectChange = (selectValues: any | any[]) => {
-    if (isMulti) {
-      setLocalState(
-        getSelectableList(selectValues.map((item: any) => item.value))
-      );
-    } else {
-      setLocalState(getSelectableList([selectValues.value]));
-    }
+    setLocalState(selectValues);
     onChange(selectValues);
   };
 
-  const options = getSelectableList(Array.from(new Set(list)));
+  const options = isCreatable
+    ? getSelectableList(Array.from(new Set(list as string[])))
+    : list;
 
   const SelectComponent = isCreatable ? CreatableSelect : Select;
 

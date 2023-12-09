@@ -5,8 +5,9 @@ import Checkbox from "../../../components/Checkbox/Checkbox";
 import Button from "../../../components/Button/Button";
 import { FormFooter, MenuFormWrapper } from "./MenuForm.styles";
 import { useCommonActions, useCommonStates } from "../../../store/commonStore";
-import { DISH_TYPES } from "./MenuForm.types";
+import { DISH_TYPES } from "./MenuForm.constants";
 import { getPayload } from "./MenuForm.helpers";
+import { getSelectableList } from "../../../common/utils";
 
 const MenuForm = ({
   item,
@@ -24,9 +25,17 @@ const MenuForm = ({
   const dishCategories = resChoices?.dishCategories || [];
   const dishNames = resChoices?.dishNames || [];
 
-  const [category, setCategory] = useState(item?.category);
-  const [name, setName] = useState(item?.name);
-  const [dishType, setDishType] = useState(item?.dishType);
+  // select types
+  const [category, setCategory] = useState(
+    item?.category ? getSelectableList([item?.category]) : null
+  );
+  const [name, setName] = useState(
+    item?.category ? getSelectableList([item?.name]) : null
+  );
+  const [dishType, setDishType] = useState(
+    DISH_TYPES.find((type) => type === item?.dishType) || null
+  );
+
   const [isBestSeller, setIsBestSeller] = useState<boolean>(
     !!item?.isBestSeller
   );
@@ -57,14 +66,14 @@ const MenuForm = ({
   };
 
   const onCategoryChange = (value: any) => {
-    setCategory(value.value);
+    setCategory(value);
     if (value.__isNew__) {
       setCategoryList([...dishCategories, value.value]);
     }
   };
 
   const onNameChange = (value: any) => {
-    setName(value.value);
+    setName(value);
     if (value.__isNew__) {
       setDishNameList([...dishNames, value.value]);
     }
@@ -110,11 +119,11 @@ const MenuForm = ({
         />
         <Select
           isRequired
-          list={Object.values(DISH_TYPES)}
+          list={DISH_TYPES}
           name="dishType"
           label="Type"
           value={dishType}
-          onChange={(value: any) => setDishType(value.value)}
+          onChange={(value: any) => setDishType(value)}
         />
         <Checkbox
           name="isBestSeller"

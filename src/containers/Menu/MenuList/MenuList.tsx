@@ -10,6 +10,7 @@ import { FaIndianRupeeSign } from "react-icons/fa6";
 import MenuForm from "../MenuForm/MenuForm";
 import { useCommonActions } from "../../../store/commonStore";
 import { FaStar } from "react-icons/fa";
+import { DISH_TYPES } from "../MenuForm/MenuForm.constants";
 
 const MenuList = ({
   menu,
@@ -49,7 +50,9 @@ const MenuList = ({
           <ListItem isLarge>{item.name}</ListItem>
           <ListItem>{item.category}</ListItem>
         </div>
-        <ListItem>{item.dishType}</ListItem>
+        <ListItem>
+          {DISH_TYPES.find((type) => type.value === item.dishType)?.label}
+        </ListItem>
         <ListItem>{item.isBestSeller ? <FaStar /> : <></>}</ListItem>
         <ListItem isLarge className="price">
           <FaIndianRupeeSign size={20} /> {item.price}

@@ -4,7 +4,7 @@ import TextInput from "../../components/TextInput/TextInput";
 import Checkbox from "../../components/Checkbox/Checkbox";
 import { InputTypes } from "../../components/TextInput/TextInput.types";
 import Button from "../../components/Button/Button";
-import { AREA_TYPES } from "./AddRestaurant.types";
+import { AREA_TYPES } from "./AddRestaurant.constants";
 import Section from "../../components/Section/Section";
 import Select from "../../components/Select/Select";
 import Loader from "../../components/Loader/Loader";

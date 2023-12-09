@@ -8,11 +8,7 @@ export const getPayload = (states: any) => {
 
   const requiredSelectFields = [name, dishType, category];
   const isAnyRequiredSelectFieldEmpty = requiredSelectFields.some((field) => {
-    if (!field) return true;
-    if (Array.isArray(field)) {
-      return field.length === 0;
-    }
-    return false;
+    return !field?.value;
   });
 
   if (isAnyRequiredStringFieldEmpty || isAnyRequiredSelectFieldEmpty) {
@@ -25,10 +21,10 @@ export const getPayload = (states: any) => {
   return {
     error: "",
     payload: {
-      name,
-      category,
-      dishType,
       isBestSeller,
+      name: name.value,
+      category: category.value,
+      dishType: dishType.value,
       price: price.value,
       description: description.value,
     },
