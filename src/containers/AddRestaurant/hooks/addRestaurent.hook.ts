@@ -57,7 +57,7 @@ const useAddRestaurantStates = () => {
       : [{ value: "", error: true }]
   );
   const [isManagedByOwner, setIsManagedByOwner] = useState(
-    editedRestaurant.metadata.isManagedByOwner
+    editedRestaurant.metadata?.isManagedByOwner || false
   );
 
   // Timings and Facilities
