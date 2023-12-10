@@ -51,13 +51,13 @@ const useAddRestaurantStates = () => {
   const [phoneNumbers, setPhoneNumbers] = useState<any[]>(
     editedRestaurant.phoneNumbers && editedRestaurant.phoneNumbers.length > 0
       ? editedRestaurant.phoneNumbers.map((n: string) => ({
-          value: n,
-          error: false,
-        }))
+        value: n,
+        error: false,
+      }))
       : [{ value: "", error: true }]
   );
   const [isManagedByOwner, setIsManagedByOwner] = useState(
-    editedRestaurant.isManagedByOwner
+    editedRestaurant.metadata.isManagedByOwner
   );
 
   // Timings and Facilities
@@ -68,7 +68,7 @@ const useAddRestaurantStates = () => {
     }
   );
   const [takeawayDetails, setTakeawayDetails] = useState(
-    editedRestaurant.takeAwayDetails || {
+    editedRestaurant.takeawayDetails || {
       enabled: false,
       timings: [null],
     }
