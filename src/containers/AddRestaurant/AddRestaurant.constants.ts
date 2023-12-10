@@ -19,6 +19,10 @@ export const AREA_TYPES = [
     value: "MARATHAHALLI",
   },
   {
+    label: "Choodasandra",
+    value: "CHOODASANDRA",
+  },
+  {
     label: "Kasavanahalli",
     value: "KASAVANAHALLI",
   },
