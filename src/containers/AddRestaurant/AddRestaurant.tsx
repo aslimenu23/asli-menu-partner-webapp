@@ -135,8 +135,22 @@ const AddRestaurant = () => {
         />
         <Timings
           time={dineInDetails.timings}
-          onChange={(value: any) =>
-            setDineInDetails({ ...dineInDetails, timings: value })
+          onChange={(value: any) => {
+            setDineInDetails({ ...dineInDetails, timings: value });
+            // setting the same time in delivery if delivery is not enabled yet
+            if (!deliveryDetails.enabled) {
+              setDeliveryDetails({
+                ...deliveryDetails,
+                timings: value,
+              })
+            }
+            if (!takeawayDetails.enabled) {
+              setTakeawayDetails({
+                ...takeawayDetails,
+                timings: value,
+              })
+            }
+          }
           }
           name="restaurantTimings"
           title="Restaurant Timings"
@@ -182,7 +196,7 @@ const AddRestaurant = () => {
 
         {/* Take Away */}
         <Checkbox
-          label="Takeway"
+          label="TakeAway"
           name="takeaway"
           value={takeawayDetails.enabled}
           onChange={(value) =>
