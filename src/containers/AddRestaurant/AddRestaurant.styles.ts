@@ -5,22 +5,29 @@ export const AddRestaurantWrapper = styled.div`
 `;
 
 export const TimingsWrapper = styled.div`
-  margin: 20px 0;
+  margin-bottom: 20px;
 
   > label {
     display: block;
     font-size: 18px;
   }
 
-  > div {
+  .timingsDiv {
     display: flex;
+
+    .timingInputs {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+    }
   }
 `;
 
 export const PhoneNumbersWrapper = styled.div`
   display: flex;
   align-items: center;
-  margin: 20px 0;
+  margin-bottom: 20px;
 
   > div:first-child {
     flex: 1;

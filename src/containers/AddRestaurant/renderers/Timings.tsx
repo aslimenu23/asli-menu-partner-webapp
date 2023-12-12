@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { TimingsWrapper } from "../AddRestaurant.styles";
 import TimePicker from "../../../components/TimePicker/TimePicker";
-import moment from "moment";
 import AddDeleteIcon from "../../../components/AddDeleteIcon/AddDeleteIcon";
 import { MAX_RESTAURANT_TIMINGS_COUNT } from "../../../common/constants";
 import { v4 as uuid } from "uuid";
@@ -17,8 +16,8 @@ const Timings = ({ time, onChange, name, title, shouldShow }: any) => {
     onChange([
       ...time,
       {
-        startTime: moment(),
-        endTime: moment(),
+        startTime: "",
+        endTime: "",
       },
     ]);
   };
@@ -41,29 +40,24 @@ const Timings = ({ time, onChange, name, title, shouldShow }: any) => {
     return (
       <TimingsWrapper key={keyUUID + " " + index}>
         <label>{title}</label>
-        <div>
-          <TimePicker
-            label="Start Time"
-            name={`${name}_from_${index + 1}`}
-            value={
-              t?.startTime
-                ? moment(t?.startTime, "HH:mm")
-                : moment("00:00", "HH:mm")
-            }
-            onChange={(value) => {
-              onTimeChange(value.format("HH:mm"), index, "startTime");
-            }}
-          />
-          <TimePicker
-            label="Close Time"
-            name={`${name}_to_${index + 1}`}
-            value={
-              t?.endTime
-                ? moment(t?.endTime, "HH:mm")
-                : moment("00:00", "HH:mm")
-            }
-            onChange={(value) => onTimeChange(value, index, "endTime")}
-          />
+        <div className="timingsDiv">
+          <div className="timingInputs">
+            <TimePicker
+              label=""
+              name={`${name}_from_${index + 1}`}
+              value={t?.startTime ? t?.startTime : null}
+              onChange={(value) => {
+                onTimeChange(value, index, "startTime");
+              }}
+            />
+            -- To --
+            <TimePicker
+              label=""
+              name={`${name}_to_${index + 1}`}
+              value={t?.endTime ? t?.endTime : null}
+              onChange={(value) => onTimeChange(value, index, "endTime")}
+            />
+          </div>
           <AddDeleteIcon
             index={index}
             list={time}

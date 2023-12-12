@@ -1,26 +1,18 @@
 import { styled } from "styled-components";
 
 export const TimePickerContainer = styled.div`
-  font-size: 18px;
-  position: relative;
+  .timings {
+    display: flex;
+    align-items: center;
 
-  .rcTimePicker {
-    width: 100%;
-    height: 30px;
-
-    .rcTimePickerPopup {
-      position: absolute;
-    }
-
-    > input {
-      font-size: 18px;
-      outline: none !important;
-      border: none !important;
-      border-bottom: 1px solid lightgrey !important;
-
-      &:focus {
-        border-bottom: 1px solid black !important;
-      }
+    select {
+      flex: 1;
+      outline: none;
+      border: 1px solid #1a1a1a;
+      margin: 0 5px;
+      text-align: right;
+      padding: 5px;
+      border-radius: 4px;
     }
   }
 `;

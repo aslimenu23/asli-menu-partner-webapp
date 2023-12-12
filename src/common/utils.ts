@@ -1,4 +1,3 @@
-import moment from "moment";
 import { LOCAL_STORAGE_KEY_REFIX } from "./constants";
 
 export const setItemInLocalStorage = (key: string, value: string) => {

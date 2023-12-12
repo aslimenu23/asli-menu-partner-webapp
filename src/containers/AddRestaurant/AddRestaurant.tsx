@@ -123,7 +123,9 @@ const AddRestaurant = () => {
 
         {/* Dine In */}
         <Checkbox
-          label="Dine In"
+          label={`Dine In ${
+            dineInDetails.enabled ? "(Select timings below)" : ""
+          }`}
           name="dineIn"
           value={dineInDetails.enabled}
           onChange={(value) =>
@@ -142,24 +144,25 @@ const AddRestaurant = () => {
               setDeliveryDetails({
                 ...deliveryDetails,
                 timings: value,
-              })
+              });
             }
             if (!takeawayDetails.enabled) {
               setTakeawayDetails({
                 ...takeawayDetails,
                 timings: value,
-              })
+              });
             }
-          }
-          }
+          }}
           name="restaurantTimings"
-          title="Restaurant Timings"
+          title=""
           shouldShow={dineInDetails.enabled}
         />
 
         {/* Delivery */}
         <Checkbox
-          label="Delivery"
+          label={`Delivery ${
+            deliveryDetails.enabled ? "(Select timings below)" : ""
+          }`}
           name="delivery"
           value={deliveryDetails.enabled}
           onChange={(value) =>
@@ -175,7 +178,7 @@ const AddRestaurant = () => {
             setDeliveryDetails({ ...deliveryDetails, timings: value })
           }
           name="deliveryTimings"
-          title="Delivery Timings"
+          title=""
           shouldShow={deliveryDetails.enabled}
         />
         {deliveryDetails.enabled ? (
@@ -196,7 +199,9 @@ const AddRestaurant = () => {
 
         {/* Take Away */}
         <Checkbox
-          label="TakeAway"
+          label={`TakeAway ${
+            takeawayDetails.enabled ? "(Select timings below)" : ""
+          }`}
           name="takeaway"
           value={takeawayDetails.enabled}
           onChange={(value) =>
@@ -212,7 +217,7 @@ const AddRestaurant = () => {
             setTakeawayDetails({ ...takeawayDetails, timings: value })
           }
           name="takeawayTimings"
-          title="Takeaway Timings"
+          title=""
           shouldShow={takeawayDetails.enabled}
         />
 
