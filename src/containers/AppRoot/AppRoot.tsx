@@ -12,7 +12,7 @@ import { AppRootContentWrapper, AppRootWrapper } from "./AppRoot.styles";
 import { removeItemInLocalStorageWithAsliMenuPrefix } from "../../common/utils";
 import { getUser, getRestaurantChoices } from "../../actions/actions";
 import { ROUTES } from "../../common/constants";
-import Snackbar from "../Snackbar/Snackbar";
+import Snackbar from "../../components/Snackbar/Snackbar";
 import { useCommonActions } from "../../store/commonStore";
 
 const AppRoot = () => {
