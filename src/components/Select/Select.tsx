@@ -57,7 +57,7 @@ const CustomSelect = ({
         styles={{
           control: (baseStyles) => ({
             ...baseStyles,
-            height: "30px",
+            minHeight: "30px",
             marginBottom: validationError ? "" : "10px",
           }),
         }}
