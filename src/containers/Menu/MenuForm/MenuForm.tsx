@@ -13,10 +13,12 @@ const MenuForm = ({
   item,
   onChange,
   onCancel,
+  previousCategory,
 }: {
   item?: any;
   onChange: (item: any) => void;
   onCancel: () => void;
+  previousCategory?: string;
 }) => {
   const { setSnackbarMessage, setCategoryList, setDishNameList } =
     useCommonActions();
@@ -25,12 +27,16 @@ const MenuForm = ({
   const dishCategories = resChoices?.dishCategories || [];
   const dishNames = resChoices?.dishNames || [];
 
+  // Setting the pre-selected category as the previous category if the new item is being added
+  let preSelectedCategory = item?.category || previousCategory;
+  preSelectedCategory = preSelectedCategory
+    ? getSelectableList([preSelectedCategory])
+    : null;
+
   // select types
-  const [category, setCategory] = useState(
-    item?.category ? getSelectableList([item?.category]) : null
-  );
+  const [category, setCategory] = useState(preSelectedCategory);
   const [name, setName] = useState(
-    item?.category ? getSelectableList([item?.name]) : null
+    item?.name ? getSelectableList([item?.name]) : null
   );
   const [dishType, setDishType] = useState(
     DISH_TYPES.find((type) => type === item?.dishType) || null

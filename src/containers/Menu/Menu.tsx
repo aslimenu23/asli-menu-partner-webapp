@@ -73,11 +73,19 @@ const Menu = () => {
   }
 
   if (loading) return <Loader isFullScreen />;
+
+  const latestCategorySelected =
+    menu.length > 0 ? menu[menu.length - 1]?.category : null;
+
   return (
     <AddMenuWrapper>
       <MenuList menu={menu} onChange={onChange} />
       {showAddForm ? (
-        <MenuForm onCancel={toggleForm} onChange={onAddItem} />
+        <MenuForm
+          onCancel={toggleForm}
+          onChange={onAddItem}
+          previousCategory={latestCategorySelected}
+        />
       ) : (
         <AddMenuButton>
           <AiFillPlusSquare size={50} onClick={toggleForm} />
