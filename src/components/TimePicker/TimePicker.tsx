@@ -25,13 +25,16 @@ const TimePicker = (props: {
   const renderHourSelect = () => {
     return (
       <select value={hours} onChange={handleHourChange}>
-        {[...Array.from({ length: 24 }, (_, index) => index + 1)].map(
-          (hour) => (
-            <option key={hour} value={hour}>
-              {hour}
-            </option>
-          )
-        )}
+        {[
+          ...Array.from({ length: 24 }, (_, index) => {
+            const number = index + 1;
+            return number < 10 ? `0${number}` : `${number}`;
+          }),
+        ].map((hour) => (
+          <option key={hour} value={hour}>
+            {hour}
+          </option>
+        ))}
       </select>
     );
   };
@@ -39,7 +42,7 @@ const TimePicker = (props: {
   const renderMinuteSelect = () => {
     return (
       <select value={minutes} onChange={handleMinuteChange}>
-        {[0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55].map((minute) => (
+        {["00", "05", 10, 15, 20, 25, 30, 35, 40, 45, 50, 55].map((minute) => (
           <option key={minute} value={minute}>
             {minute}
           </option>
